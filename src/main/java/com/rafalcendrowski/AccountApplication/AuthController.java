@@ -1,32 +1,40 @@
 package com.rafalcendrowski.AccountApplication;
 
-import io.micrometer.core.lang.NonNull;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    @ExceptionHandler
+        @ResponseStatus(HttpStatus.BAD_REQUEST)
+        public ResponseEntity<String> handleException(NullPointerException exception) {
+        return ResponseEntity.badRequest().build();
+    }
+
     @PostMapping("/signup")
-    public ResponseEntity<Map<String, String>> addAccount(@RequestBody Account account) {
+    public ResponseEntity<Map<String, String>> addAccount (@Valid @RequestBody Account account) {
         String[] email = account.getEmail().split("@");
         String domain = email.length == 2 ? email[1] : "";
         if (!account.getPassword().isEmpty() && domain.equals("acme.com")) {
             return new ResponseEntity<>(
-                    Map.of("name", account.getName(), "lastname", account.getLastname(),
-                            "email", account.getEmail()), HttpStatus.ACCEPTED);
+                    new LinkedHashMap<String, String>(Map.of("name", account.getName(),
+                            "lastname", account.getLastname(), "email", account.getEmail())),
+                    HttpStatus.ACCEPTED);
         } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
     }
 }
+
 
 class Account {
     @NonNull
