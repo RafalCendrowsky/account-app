@@ -1,5 +1,6 @@
 package com.rafalcendrowski.AccountApplication;
 
+import io.micrometer.core.lang.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,24 +16,35 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<Map<String, String>> addAccount(@RequestBody Account account) {
-        if (account.getPassword().isEmpty() ||
-                !account.getEmail().split("@")[1].equals("acme.com")
-           ) {
-            return new ResponseEntity<Map<String, String>>(HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<Map<String, String>>(
+        String[] email = account.getEmail().split("@");
+        String domain = email.length == 2 ? email[1] : "";
+        if (!account.getPassword().isEmpty() && domain.equals("acme.com")) {
+            return new ResponseEntity<>(
                     Map.of("name", account.getName(), "lastname", account.getLastname(),
-                    "email", account.getEmail()), HttpStatus.ACCEPTED);
+                            "email", account.getEmail()), HttpStatus.ACCEPTED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
 }
 
 class Account {
+    @NonNull
     private String name;
+    @NonNull
     private String lastname;
+    @NonNull
     private String email;
+    @NonNull
     private String password;
+
+    public Account(@NonNull String name, @NonNull String lastname,
+                   @NonNull String email, @NonNull String password) {
+        this.name = name;
+        this.lastname = lastname;
+        this.email = email;
+        this.password = password;
+    }
 
     public String getName() {
         return name;
