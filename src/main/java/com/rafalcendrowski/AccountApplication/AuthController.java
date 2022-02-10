@@ -21,13 +21,12 @@ class InvalidEmailException extends RuntimeException {
 public class AuthController {
 
     @PostMapping("/signup")
-    public ResponseEntity<Map<String, String>> addAccount(@Valid @RequestBody Account account) {
+    public Map<String, String> addAccount(@Valid @RequestBody Account account) {
         String[] email = account.getEmail().split("@");
         String domain = email.length == 2 ? email[1] : "";
         if (domain.equals("acme.com")) {
-            return new ResponseEntity<>(
-                    Map.of("name", account.getName(), "lastname", account.getLastname(),
-                            "email", account.getEmail()), HttpStatus.ACCEPTED);
+                return Map.of("name", account.getName(), "lastname", account.getLastname(),
+                            "email", account.getEmail());
         } else {
             throw new InvalidEmailException();
         }
