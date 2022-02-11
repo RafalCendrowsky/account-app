@@ -34,7 +34,7 @@ public class AuthController {
     PasswordEncoder passwordEncoder;
 
     @PostMapping("/signup")
-    public Map<String, String> addAccount(@Valid @RequestBody Account account) {
+    public Map<String, Object> addAccount(@Valid @RequestBody Account account) {
         String[] email = account.getEmail().split("@");
         String domain = email.length == 2 ? email[1] : "";
         if (!domain.equals("acme.com")) {
@@ -47,7 +47,7 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(account.getPassword()));
         userRepository.save(user);
         return Map.of("name", account.getName(), "lastname", account.getLastname(),
-                "email", account.getEmail(), "id", user.getId().toString());
+                "email", account.getEmail(), "id", user.getId());
     }
 }
 
