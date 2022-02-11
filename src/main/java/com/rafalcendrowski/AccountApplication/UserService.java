@@ -1,21 +1,19 @@
 package com.rafalcendrowski.AccountApplication;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
 
 @Service
 public class UserService implements UserDetailsService {
-    @Autowired
     UserRepository userRepository;
 
     @Override
@@ -29,16 +27,18 @@ public class UserService implements UserDetailsService {
     }
 }
 
-@Component
-interface UserRepository extends CrudRepository<User, Long> {
+@Repository
+interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
 }
 
+@Entity(name="user")
 class User implements UserDetails {
     @Id
     private Long id;
     private String username;
     private String password;
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<GrantedAuthority> authorityList;
 
     public User() {}
