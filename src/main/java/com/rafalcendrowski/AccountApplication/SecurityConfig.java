@@ -1,5 +1,6 @@
 package com.rafalcendrowski.AccountApplication;
 
+import org.hibernate.event.service.spi.JpaBootstrapSensitive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +14,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +30,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
@@ -39,8 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable().headers().frameOptions().disable()
                 .and()
-                .authorizeRequests() // manage access
-                .antMatchers(HttpMethod.POST, "/api/signup").permitAll()
+                .authorizeRequests()
+                .mvcMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -49,11 +55,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public DaoAuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(new BCryptPasswordEncoder());
+        provider.setPasswordEncoder(passwordEncoder);
         provider.setUserDetailsService(userDetailsService);
         return provider;
     }
 
+}
+
+@Configuration
+class BCryptEncoderConfig {
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }
 
 class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {

@@ -1,5 +1,6 @@
 package com.rafalcendrowski.AccountApplication;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Service
 public class UserService implements UserDetailsService {
+    @Autowired
     UserRepository userRepository;
 
     @Override
@@ -35,6 +37,7 @@ interface UserRepository extends JpaRepository<User, Long> {
 @Entity(name="user")
 class User implements UserDetails {
     @Id
+    @GeneratedValue
     private Long id;
     private String username;
     private String password;
