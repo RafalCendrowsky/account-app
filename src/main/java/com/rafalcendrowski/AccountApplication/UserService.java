@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Service
@@ -21,7 +22,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username.toLowerCase());
         if (user == null) {
             throw new UsernameNotFoundException("not found");
         } else {

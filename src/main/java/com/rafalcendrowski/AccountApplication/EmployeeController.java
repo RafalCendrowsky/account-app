@@ -1,6 +1,8 @@
 package com.rafalcendrowski.AccountApplication;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,8 +15,7 @@ public class EmployeeController {
 
 
     @GetMapping("/payment")
-    public Map<String, Object> getPayment(Authentication auth) {
-        User user = (User) auth.getPrincipal();
+    public Map<String, Object> getPayment(@AuthenticationPrincipal User user) {
         return user.getUserMap();
     }
 }
