@@ -11,6 +11,7 @@ public class User implements UserDetails{
     private String password;
     private List<GrantedAuthority> authorityList;
 
+    public User() {}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -25,6 +26,18 @@ public class User implements UserDetails{
     @Override
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setAuthorityList(List<GrantedAuthority> authorityList) {
+        this.authorityList = authorityList;
     }
 
     @Override
