@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -41,10 +42,17 @@ class User implements UserDetails {
     private Long id;
     private String username;
     private String password;
+    private String name;
+    private String lastName;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<GrantedAuthority> authorityList;
 
     public User() {}
+
+    public Map<String, Object> getUserMap() {
+        return Map.of("lastname", getLastName(), "name", getName(),
+                "id", getId(), "email", getUsername());
+    }
 
     public Long getId() {
         return id;
@@ -65,6 +73,14 @@ class User implements UserDetails {
         return username;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -75,6 +91,14 @@ class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public void setAuthorityList(List<GrantedAuthority> authorityList) {

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Invalid email")
@@ -44,11 +44,14 @@ public class AuthController {
         }
         User user = new User();
         user.setUsername(account.getEmail().toLowerCase());
+        user.setName(account.getName());
+        user.setLastName(account.getLastname());
         user.setPassword(passwordEncoder.encode(account.getPassword()));
         userRepository.save(user);
-        return Map.of("name", account.getName(), "lastname", account.getLastname(),
-                "email", account.getEmail(), "id", user.getId());
+        return user.getUserMap();
     }
+
+
 }
 
 
