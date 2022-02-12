@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -56,17 +57,13 @@ public class AuthController {
 
 
 class Account {
-    @NotNull
-    @Size(min=1)
+    @NotEmpty
     private String name;
-    @NotNull
-    @Size(min=1)
+    @NotEmpty
     private String lastname;
-    @NotNull
-    @Size(min=1)
+    @NotEmpty
     private String email;
-    @NotNull
-    @Size(min=1)
+    @NotEmpty
     private String password;
 
     public Account(String name, String lastname, String email, String password) {
