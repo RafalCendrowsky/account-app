@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,7 @@ class Account {
     @NotEmpty
     private String lastname;
     @NotEmpty
+    @Pattern(regexp = "[\\w._]*@acme\\.com")
     private String email;
     @NotEmpty
     private String password;
