@@ -10,13 +10,6 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Invalid email")
-class InvalidEmailException extends RuntimeException {
-    public InvalidEmailException() {
-        super();
-    }
-}
-
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "User already exists")
 class UserExistsException extends RuntimeException {
     public UserExistsException() { super(); }
@@ -34,11 +27,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public Map<String, Object> addAccount(@Valid @RequestBody Account account) {
-        String[] email = account.getEmail().split("@");
-        String domain = email.length == 2 ? email[1] : "";
-        if (!domain.equals("acme.com")) {
-            throw new InvalidEmailException();
-        } else if (userRepository.findByUsername(account.getEmail().toLowerCase()) != null) {
+        if (userRepository.findByUsername(account.getEmail().toLowerCase()) != null) {
             throw new UserExistsException();
         }
         User user = new User();
