@@ -35,7 +35,8 @@ interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
 }
 
-@Entity(name="user")
+@Entity
+@Table(name = "users")
 class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
