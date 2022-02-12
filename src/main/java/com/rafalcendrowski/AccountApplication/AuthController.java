@@ -47,13 +47,13 @@ public class AuthController {
     }
 
     @PostMapping("/changepass")
-    public Map<String, String> changePassword(@NotBlank @Size(min=12) String password, @AuthenticationPrincipal User user) {
-        if(isBreached(password)) {
+    public Map<String, String> changePassword(@RequestBody @Valid @NotBlank @Size(min=12) String new_password, @AuthenticationPrincipal User user) {
+        if(isBreached(new_password)) {
             throw new BreachedPasswordException();
-        } else if(passwordEncoder.matches(password, user.getPassword())) {
+        } else if(passwordEncoder.matches(new_password, user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwords must be different");
         } else {
-            user.setPassword(passwordEncoder.encode(password));
+            user.setPassword(passwordEncoder.encode(new_password));
             return Map.of("email", user.getUsername(), "status", "Password has been updated successfully");
         }
     }
@@ -75,7 +75,7 @@ class Account {
     private String lastname;
     @NotNull
     @Email
-    @Pattern(regexp = "@acme\\.com")
+    @Pattern(regexp = ".*@acme\\.com")
     private String email;
     @NotEmpty
     @Size(min=12)

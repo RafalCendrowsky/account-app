@@ -38,14 +38,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic()
-                .authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                .and()
-                .csrf().disable().headers().frameOptions().disable()
-                .and()
+        http
                 .authorizeRequests()
                 .mvcMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
                 .anyRequest().authenticated()
+                .and()
+                .httpBasic()
+                .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                .and()
+                .csrf().disable().headers().frameOptions().disable()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
