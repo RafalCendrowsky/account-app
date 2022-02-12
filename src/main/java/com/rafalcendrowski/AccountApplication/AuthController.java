@@ -1,19 +1,24 @@
 package com.rafalcendrowski.AccountApplication;
 
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "User already exists")
-class UserExistsException extends RuntimeException {
-    public UserExistsException() { super(); }
+
+@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Password has been breached")
+class BreachedPasswordException extends RuntimeException {
+    public BreachedPasswordException() { super(); }
 }
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -28,7 +33,9 @@ public class AuthController {
     @PostMapping("/signup")
     public Map<String, Object> addAccount(@Valid @RequestBody Account account) {
         if (userRepository.findByUsername(account.getEmail().toLowerCase()) != null) {
-            throw new UserExistsException();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists");
+        } else if (isBreached(account.getPassword())) {
+            throw new BreachedPasswordException();
         }
         User user = new User();
         user.setUsername(account.getEmail().toLowerCase());
@@ -39,6 +46,24 @@ public class AuthController {
         return user.getUserMap();
     }
 
+    @PostMapping("/changepass")
+    public Map<String, String> changePassword(@NotBlank @Size(min=12) String password, @AuthenticationPrincipal User user) {
+        if(isBreached(password)) {
+            throw new BreachedPasswordException();
+        } else if(passwordEncoder.matches(password, user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwords must be different");
+        } else {
+            user.setPassword(passwordEncoder.encode(password));
+            return Map.of("email", user.getUsername(), "status", "Password has been updated successfully");
+        }
+    }
+
+    public boolean isBreached(String password) {
+        return List.of("PasswordForJanuary", "PasswordForFebruary", "PasswordForMarch",
+                "PasswordForApril", "PasswordForMay", "PasswordForJune", "PasswordForJuly",
+                "PasswordForAugust", "PasswordForSeptember", "PasswordForOctober", "PasswordForNovember",
+                "PasswordForDecember").contains(password);
+    }
 
 }
 
@@ -53,6 +78,7 @@ class Account {
     @Pattern(regexp = "@acme\\.com")
     private String email;
     @NotEmpty
+    @Size(min=12)
     private String password;
 
     public Account(String name, String lastname, String email, String password) {
