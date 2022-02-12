@@ -1,6 +1,5 @@
 package com.rafalcendrowski.AccountApplication;
 
-import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -46,14 +45,16 @@ public class AuthController {
         return user.getUserMap();
     }
 
+
     @PostMapping("/changepass")
-    public Map<String, String> changePassword(@RequestBody @Valid @NotBlank @Size(min=12) String new_password, @AuthenticationPrincipal User user) {
-        if(isBreached(new_password)) {
+    public Map<String, String> changePassword(@RequestBody @Valid Password newPassword, @AuthenticationPrincipal User user) {
+        if(isBreached(newPassword.getPassword())) {
             throw new BreachedPasswordException();
-        } else if(passwordEncoder.matches(new_password, user.getPassword())) {
+        } else if(passwordEncoder.matches(newPassword.getPassword(), user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwords must be different");
         } else {
-            user.setPassword(passwordEncoder.encode(new_password));
+            user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
+            userRepository.save(user);
             return Map.of("email", user.getUsername(), "status", "Password has been updated successfully");
         }
     }
@@ -67,6 +68,21 @@ public class AuthController {
 
 }
 
+class Password {
+    @NotEmpty
+    @Size(min=12)
+    String password;
+
+    public Password() {}
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}
 
 class Account {
     @NotEmpty
