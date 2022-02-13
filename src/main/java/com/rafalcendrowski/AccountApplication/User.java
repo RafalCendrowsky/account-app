@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class UserService implements UserDetailsService {
+class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
@@ -37,7 +37,7 @@ interface UserRepository extends JpaRepository<User, Long> {
 
 @Entity
 @Table(name = "users")
-class User implements UserDetails {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -47,6 +47,8 @@ class User implements UserDetails {
     private String lastName;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<GrantedAuthority> authorityList;
+    @OneToMany
+    private List<Payment> payments;
 
     public User() {}
 
@@ -104,6 +106,18 @@ class User implements UserDetails {
 
     public void setAuthorityList(List<GrantedAuthority> authorityList) {
         this.authorityList = authorityList;
+    }
+
+    public List<Payment> getPayments() {
+        return payments;
+    }
+
+    public void setPayments(List<Payment> payments) {
+        this.payments = payments;
+    }
+
+    public void addPayment(Payment payment) {
+        this.payments.add(payment);
     }
 
     @Override
