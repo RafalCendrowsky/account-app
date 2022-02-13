@@ -30,17 +30,17 @@ public class AuthController {
     PasswordEncoder passwordEncoder;
 
     @PostMapping("/signup")
-    public Map<String, Object> addAccount(@Valid @RequestBody Account account) {
-        if (userRepository.findByUsername(account.getEmail().toLowerCase()) != null) {
+    public Map<String, Object> addAccount(@Valid @RequestBody UserBody userBody) {
+        if (userRepository.findByUsername(userBody.getEmail().toLowerCase()) != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists");
-        } else if (isBreached(account.getPassword())) {
+        } else if (isBreached(userBody.getPassword())) {
             throw new BreachedPasswordException();
         }
         User user = new User();
-        user.setUsername(account.getEmail().toLowerCase());
-        user.setName(account.getName());
-        user.setLastName(account.getLastname());
-        user.setPassword(passwordEncoder.encode(account.getPassword()));
+        user.setUsername(userBody.getEmail().toLowerCase());
+        user.setName(userBody.getName());
+        user.setLastName(userBody.getLastname());
+        user.setPassword(passwordEncoder.encode(userBody.getPassword()));
         userRepository.save(user);
         return user.getUserMap();
     }
@@ -84,7 +84,7 @@ class Password {
     }
 }
 
-class Account {
+class UserBody {
     @NotEmpty
     private String name;
     @NotEmpty
@@ -97,7 +97,7 @@ class Account {
     @Size(min=12)
     private String password;
 
-    public Account(String name, String lastname, String email, String password) {
+    public UserBody(String name, String lastname, String email, String password) {
         this.name = name;
         this.lastname = lastname;
         this.email = email;
