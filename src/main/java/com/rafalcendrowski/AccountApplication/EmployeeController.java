@@ -38,9 +38,12 @@ public class EmployeeController {
     }
 
     private Map<String, Object> getPaymentMap(User user, Payment payment) {
+        String salary = String.valueOf(payment.getSalary());
+        String dollars = salary.substring(0, salary.length() - 2).isBlank() ? "0" : salary.substring(0, salary.length() - 2);
+        salary = dollars + " dollar(s) " + salary.substring(salary.length() - 2) + " cent(s)";
         String month = DateFormatSymbols.getInstance().getMonths()[Integer.parseInt(payment.getPeriod().substring(0,2))-1];
         return Map.of("name", user.getName(), "lastname", user.getLastName(),
-                "period", month + payment.getPeriod().substring(2), "salary", payment.getSalary());
+                "period", month + payment.getPeriod().substring(2), "salary", salary);
     }
 
     @GetMapping("/payment")
