@@ -108,17 +108,11 @@ public class User implements UserDetails {
         this.authorityList = authorityList;
     }
 
-    public List<Payment> getPayments() {
-        return payments;
-    }
-
-    public void setPayments(List<Payment> payments) {
-        this.payments = payments;
-    }
-
     public void addPayment(Payment payment) {
         this.payments.add(payment);
     }
+
+    public void removePayment(Payment payment) { this.payments.remove(payment); }
 
     @Override
     public boolean isAccountNonExpired() {

@@ -12,6 +12,9 @@ import java.util.Objects;
 interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("SELECT p FROM Payment p WHERE p.employee = ?1 AND p.period = ?2")
     Payment findByEmployeePeriod(User employee, String period);
+
+    @Query("SELECT p FROM Payment p WHERE p.employee = ?1")
+    Payment[] findByEmployee(User employee);
 }
 
 @Entity
