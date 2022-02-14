@@ -32,12 +32,18 @@ public class Payment {
     public Payment() {
     }
 
+    public Payment(User employee, String period, Long salary) {
+        this.employee = employee;
+        this.period = period;
+        this.salary = salary;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Payment)) return false;
         Payment payment = (Payment) o;
-        return employee.equals(payment.employee) && period.equals(payment.period);
+        return employee.equals(payment.getEmployee()) && period.equals(payment.getPeriod());
     }
 
     @Override

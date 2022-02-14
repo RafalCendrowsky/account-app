@@ -7,7 +7,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -42,12 +41,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .mvcMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
-                .mvcMatchers(HttpMethod.POST, "/api/acct/payments").permitAll()
-                .mvcMatchers(HttpMethod.PUT, "/api/acct/payments").permitAll()
-                .anyRequest().authenticated()
+                .mvcMatchers(HttpMethod.POST, "/api/auth/changepass").hasAnyRole()
+                .mvcMatchers(HttpMethod.POST, "/api/acct/payments").hasRole("ACCOUNTANT")
+                .mvcMatchers(HttpMethod.PUT, "/api/acct/payments").hasRole("ACCOUNTANT")
+                .mvcMatchers(HttpMethod.GET, "/api/empl/payment").hasRole("USER")
+                .anyRequest().hasRole("ADMINISTRATOR")
                 .and()
                 .httpBasic()
-//                .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .and()
                 .csrf().disable().headers().frameOptions().disable()
                 .and()

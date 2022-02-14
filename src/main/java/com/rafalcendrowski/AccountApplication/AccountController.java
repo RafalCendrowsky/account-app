@@ -26,15 +26,12 @@ public class AccountController {
         for(PaymentBody paymentBody : payments) {
             User employee = userRepository.findByUsername(paymentBody.getEmployee());
             if (employee == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employee not found");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found");
             } else if (paymentRepository.findByEmployeePeriod(employee, paymentBody.getPeriod()) != null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "Payment for %s in %s already exists".formatted(paymentBody.getEmployee(), paymentBody.getPeriod()));
             } else {
-                Payment payment = new Payment();
-                payment.setEmployee(employee);
-                payment.setPeriod(paymentBody.getPeriod());
-                payment.setSalary(paymentBody.getSalary());
+                Payment payment = new Payment(employee, paymentBody.getPeriod(), paymentBody.getSalary());
                 employee.addPayment(payment);
                 paymentRepository.save(payment);
                 userRepository.save(employee);
@@ -64,13 +61,13 @@ public class AccountController {
         return Map.of("status", "Deleted successfully");
     }
 
-    private Payment validatePayment(PaymentBody paymentBody, User employee) {
+    public Payment validatePayment(PaymentBody paymentBody, User employee) {
         if (employee == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employee not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found");
         } else {
             Payment payment = paymentRepository.findByEmployeePeriod(employee, paymentBody.getPeriod());
             if (payment == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Payment for %s in %s not found".formatted(paymentBody.getEmployee(), paymentBody.getPeriod()));
             } else {
                 return payment;

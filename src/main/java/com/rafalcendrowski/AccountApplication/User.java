@@ -52,6 +52,14 @@ public class User implements UserDetails {
 
     public User() {}
 
+    public User(String username, String password, String name, String lastname) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.lastname = lastname;
+        this.roles.add(new Role("ROLE_USER"));
+    }
+
     public Map<String, Object> getUserMap() {
         List<String> rolesList = getRolesToString();
         rolesList.sort(String::compareTo);
@@ -126,15 +134,29 @@ public class User implements UserDetails {
         return rolesToString;
     }
 
-    public boolean addRole(Role role) { return this.roles.add(role);}
+    public boolean addRole(Role role) {
+        return this.roles.add(role);
+    }
 
-    public boolean removeRole(Role role) { return this.roles.remove(role);}
+    public boolean removeRole(Role role) {
+        return this.roles.remove(role);
+    }
+
+    public boolean hasRole(Role role) {
+        return this.roles.contains(role);
+    }
+
+    public boolean hasRole(String role) {
+        return this.roles.contains(new Role(role));
+    }
 
     public void addPayment(Payment payment) {
         this.payments.add(payment);
     }
 
-    public void removePayment(Payment payment) { this.payments.remove(payment); }
+    public void removePayment(Payment payment) {
+        this.payments.remove(payment);
+    }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -159,7 +181,7 @@ public class User implements UserDetails {
 
 @Embeddable
 class Role {
-    @Pattern(regexp = "ROLE_(ADMIN|USER|ACCOUNTANT)")
+    @Pattern(regexp = "ROLE_(ADMINISTRATOR|USER|ACCOUNTANT)")
     private String role;
 
     public Role() {

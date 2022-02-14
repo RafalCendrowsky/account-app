@@ -10,7 +10,9 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Password has been breached")
@@ -36,11 +38,11 @@ public class AuthController {
         } else if (isBreached(userBody.getPassword())) {
             throw new BreachedPasswordException();
         }
-        User user = new User();
-        user.setUsername(userBody.getEmail().toLowerCase());
-        user.setName(userBody.getName());
-        user.setLastName(userBody.getLastname());
-        user.setPassword(passwordEncoder.encode(userBody.getPassword()));
+        User user = new User(userBody.getEmail().toLowerCase(Locale.ROOT), passwordEncoder.encode(userBody.getPassword()),
+                userBody.getName(), userBody.getLastname());
+        if (userRepository.count() == 0) {
+            user.setRoles(Set.of(new Role("ROLE_ADMIN")));
+        }
         userRepository.save(user);
         return user.getUserMap();
     }
@@ -96,6 +98,8 @@ class UserBody {
     @NotEmpty
     @Size(min=12)
     private String password;
+
+    public UserBody() {}
 
     public UserBody(String name, String lastname, String email, String password) {
         this.name = name;

@@ -27,23 +27,23 @@ public class EmployeeController {
     PaymentRepository paymentRepository;
 
     @GetMapping(value = "/payment", params = {"period"})
-    public Map<String, Object> getPayment(@Validated @RequestParam @Pattern(regexp = "\\d\\d-\\d\\d\\d\\d") String period,
+    public Map<String, Object> getPayment(@RequestParam String period,
                                           @AuthenticationPrincipal User user) {
         Payment payment = paymentRepository.findByEmployeePeriod(user, period);
         if (payment == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment for %s not found".formatted(period));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment for %s not found".formatted(period));
         } else {
             return getPaymentMap(user, payment);
         }
     }
 
     private Map<String, Object> getPaymentMap(User user, Payment payment) {
-        String salary = String.valueOf(payment.getSalary());
-        String dollars = salary.substring(0, salary.length() - 2).isBlank() ? "0" : salary.substring(0, salary.length() - 2);
-        salary = dollars + " dollar(s) " + salary.substring(salary.length() - 2) + " cent(s)";
-        String month = DateFormatSymbols.getInstance().getMonths()[Integer.parseInt(payment.getPeriod().substring(0,2))-1];
-        return Map.of("name", user.getName(), "lastname", user.getLastName(),
-                "period", month + payment.getPeriod().substring(2), "salary", salary);
+        String dollars = String.valueOf(payment.getSalary()/100L);
+        dollars = dollars.isBlank() ? "0 dollar(s)" : dollars.concat(" dollar(s) ");
+        String cents = String.valueOf(payment.getSalary()%100L);
+        cents = cents.isBlank() ? "0 cent(s)" : cents.concat(" cent(s)");
+        return Map.of("name", user.getName(), "lastname", user.getLastname(),
+                "period", payment.getPeriod(), "salary", dollars + cents);
     }
 
     @GetMapping("/payment")
