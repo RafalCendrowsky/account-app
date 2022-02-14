@@ -3,6 +3,7 @@ package com.rafalcendrowski.AccountApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,9 +11,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import javax.validation.constraints.Pattern;
+import java.util.*;
 
 @Service
 class UserService implements UserDetailsService {
@@ -21,9 +21,9 @@ class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username.toLowerCase());
+        User user = userRepository.findByUsername(username.toLowerCase(Locale.ROOT));
         if (user == null) {
-            throw new UsernameNotFoundException("not found");
+            throw new UsernameNotFoundException("User not found");
         } else {
             return user;
         }
@@ -44,17 +44,19 @@ public class User implements UserDetails {
     private String username;
     private String password;
     private String name;
-    private String lastName;
+    private String lastname;
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<GrantedAuthority> authorityList;
+    private Set<Role> roles = new HashSet<>();
     @OneToMany
     private List<Payment> payments;
 
     public User() {}
 
     public Map<String, Object> getUserMap() {
-        return Map.of("lastname", getLastName(), "name", getName(),
-                "id", getId(), "email", getUsername());
+        List<String> rolesList = getRolesToString();
+        rolesList.sort(String::compareTo);
+        return Map.of("lastname", lastname, "name", name,
+                "id", id, "email", username, "roles", rolesList);
     }
 
     public Long getId() {
@@ -63,7 +65,11 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorityList;
+        List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
+        for(Role role: roles) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(role.toString()));
+        }
+        return grantedAuthorities;
     }
 
     @Override
@@ -80,8 +86,8 @@ public class User implements UserDetails {
         return name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
     public void setId(Long id) {
@@ -100,13 +106,29 @@ public class User implements UserDetails {
         this.name = name;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
-    public void setAuthorityList(List<GrantedAuthority> authorityList) {
-        this.authorityList = authorityList;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public List<String> getRolesToString() {
+        List<String> rolesToString = new ArrayList<>();
+        for(Role role: roles) {
+            rolesToString.add(role.toString());
+        }
+        return rolesToString;
+    }
+
+    public boolean addRole(Role role) { return this.roles.add(role);}
+
+    public boolean removeRole(Role role) { return this.roles.remove(role);}
 
     public void addPayment(Payment payment) {
         this.payments.add(payment);
@@ -132,5 +154,44 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+}
+
+@Embeddable
+class Role {
+    @Pattern(regexp = "ROLE_(ADMIN|USER|ACCOUNTANT)")
+    private String role;
+
+    public Role() {
+    }
+
+    public Role(String role) {
+        this.role = role;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return this.role;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Role)) return false;
+        Role role1 = (Role) o;
+        return role.equals(role1.getRole());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(role);
     }
 }
