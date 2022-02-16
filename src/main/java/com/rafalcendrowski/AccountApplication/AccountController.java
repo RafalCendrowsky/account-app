@@ -1,7 +1,9 @@
 package com.rafalcendrowski.AccountApplication;
 
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -76,6 +78,7 @@ public class AccountController {
     }
 }
 
+@Data
 class PaymentBody {
     @NotEmpty
     @Email
@@ -86,36 +89,6 @@ class PaymentBody {
     private String period;
     @Min(0L)
     private Long salary;
-
-    public PaymentBody(String email, String period, Long salary) {
-        this.employee = email;
-        this.period = period;
-        this.salary = salary;
-    }
-
-    public String getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(String employee) {
-        this.employee = employee;
-    }
-
-    public String getPeriod() {
-        return period;
-    }
-
-    public void setPeriod(String period) {
-        this.period = period;
-    }
-
-    public Long getSalary() {
-        return salary;
-    }
-
-    public void setSalary(Long salary) {
-        this.salary = salary;
-    }
 }
 
 class PaymentList<E> implements List<E>{

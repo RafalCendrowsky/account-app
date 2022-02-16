@@ -1,5 +1,7 @@
 package com.rafalcendrowski.AccountApplication;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,7 +43,7 @@ public class AuthController {
         User user = new User(userBody.getEmail().toLowerCase(Locale.ROOT), passwordEncoder.encode(userBody.getPassword()),
                 userBody.getName(), userBody.getLastname());
         if (userRepository.count() == 0) {
-            user.setRoles(Set.of(new Role("ROLE_ADMIN")));
+            user.setRoles(Set.of(new Role("ROLE_ADMINISTRATOR")));
         }
         userRepository.save(user);
         return user.getUserMap();
@@ -70,22 +72,15 @@ public class AuthController {
 
 }
 
+@Data
 class Password {
     @NotEmpty
     @Size(min=12)
     String password;
-
-    public Password() {}
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }
 
+@Data
+@NoArgsConstructor
 class UserBody {
     @NotEmpty
     private String name;
@@ -99,44 +94,4 @@ class UserBody {
     @Size(min=12)
     private String password;
 
-    public UserBody() {}
-
-    public UserBody(String name, String lastname, String email, String password) {
-        this.name = name;
-        this.lastname = lastname;
-        this.email = email;
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

@@ -1,14 +1,14 @@
 package com.rafalcendrowski.AccountApplication;
 
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
@@ -86,6 +86,8 @@ public class AdminController {
 
 }
 
+@Data
+@NoArgsConstructor
 class RoleBody {
     @NotEmpty
     private String user;
@@ -93,30 +95,4 @@ class RoleBody {
     private String role;
     @Pattern(regexp = "(GRANT|REMOVE)")
     private String operation;
-
-    public RoleBody() {}
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getOperation() {
-        return operation;
-    }
-
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
 }

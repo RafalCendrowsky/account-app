@@ -1,11 +1,11 @@
 package com.rafalcendrowski.AccountApplication;
 
+import lombok.Data;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
-import javax.validation.Constraint;
 import java.util.Objects;
 
 @Repository
@@ -19,6 +19,7 @@ interface PaymentRepository extends JpaRepository<Payment, Long> {
 
 @Entity
 @Table(name = "payments")
+@Data
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,10 +28,6 @@ public class Payment {
     User employee;
     private String period;
     private Long salary;
-
-
-    public Payment() {
-    }
 
     public Payment(User employee, String period, Long salary) {
         this.employee = employee;
@@ -51,31 +48,7 @@ public class Payment {
         return Objects.hash(employee, period);
     }
 
-    public User getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(User employee) {
-        this.employee = employee;
-    }
-
-    public String getPeriod() {
-        return period;
-    }
-
-    public void setPeriod(String period) {
-        this.period = period;
-    }
-
-    public Long getSalary() {
-        return salary;
-    }
-
-    public void setSalary(Long salary) {
-        this.salary = salary;
-    }
-
-    public Long getId() {
-        return id;
+    private void setId(Long id) {
+        this.id = id;
     }
 }

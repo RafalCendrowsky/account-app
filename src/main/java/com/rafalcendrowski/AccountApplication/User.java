@@ -1,5 +1,8 @@
 package com.rafalcendrowski.AccountApplication;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,8 +38,10 @@ interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
 }
 
+
 @Entity
 @Table(name = "users")
+@Data
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,8 +55,6 @@ public class User implements UserDetails {
     @OneToMany
     private List<Payment> payments;
 
-    public User() {}
-
     public User(String username, String password, String name, String lastname) {
         this.username = username;
         this.password = password;
@@ -61,14 +64,10 @@ public class User implements UserDetails {
     }
 
     public Map<String, Object> getUserMap() {
-        List<String> rolesList = getRolesToString();
+        List<String> rolesList = getRolesAsStrings();
         rolesList.sort(String::compareTo);
         return Map.of("lastname", lastname, "name", name,
                 "id", id, "email", username, "roles", rolesList);
-    }
-
-    public Long getId() {
-        return id;
     }
 
     @Override
@@ -80,56 +79,14 @@ public class User implements UserDetails {
         return grantedAuthorities;
     }
 
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setId(Long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public List<String> getRolesToString() {
+    public List<String> getRolesAsStrings() {
         List<String> rolesToString = new ArrayList<>();
         for(Role role: roles) {
-            rolesToString.add(role.toString());
+            rolesToString.add(role.getRole());
         }
         return rolesToString;
     }
@@ -180,40 +137,10 @@ public class User implements UserDetails {
 }
 
 @Embeddable
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 class Role {
     @Pattern(regexp = "ROLE_(ADMINISTRATOR|USER|ACCOUNTANT)")
     private String role;
-
-    public Role() {
-    }
-
-    public Role(String role) {
-        this.role = role;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    @Override
-    public String toString() {
-        return this.role;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Role)) return false;
-        Role role1 = (Role) o;
-        return role.equals(role1.getRole());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(role);
-    }
 }
