@@ -36,7 +36,7 @@ public class AdminController {
         User user = userRepository.findByUsername(email);
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-        } else if (user.hasRole("ROLE_ADMINISTRATOR")) {
+        } else if (user.getRoles().contains(Role.of("ROLE_ADMINISTRATOR"))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't remove ADMINISTRATOR!");
         } else {
             userRepository.delete(user);
@@ -49,7 +49,7 @@ public class AdminController {
         User user = userRepository.findByUsername(roleBody.getUser());
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!");
-        } else if (user.hasRole("ROLE_ADMINISTRATOR") || roleBody.getRole().equals("ROLE_ADMINISTRATOR")) {
+        } else if (user.getRoles().contains(Role.of("ROLE_ADMINISTRATOR")) || roleBody.getRole().equals("ROLE_ADMINISTRATOR")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot modify ADMINISTRATOR");
         } else {
             Role role = new Role();
@@ -58,7 +58,7 @@ public class AdminController {
             } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Role %s not found".formatted(roleBody.getRole()));
             }
-            user.addRole(role);
+            user.getRoles().add(role);
             userRepository.save(user);
             return user.getUserMap();
         }
@@ -69,15 +69,15 @@ public class AdminController {
         User user = userRepository.findByUsername(roleBody.getUser());
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!");
-        } else if (user.hasRole("ROLE_ADMINISTRATOR") || roleBody.getRole().equals("ROLE_ADMINISTRATOR")) {
+        } else if (user.getRoles().contains(Role.of("ROLE_ADMINISTRATOR")) || roleBody.getRole().equals("ROLE_ADMINISTRATOR")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot modify ADMINISTRATOR");
-        } else if(user.hasRole(roleBody.getRole()) && user.getRoles().size() == 1) {
+        } else if(user.getRoles().contains(Role.of(roleBody.getRole())) && user.getRoles().size() == 1) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot remove user's only role");
         } else {
-            if( user.hasRole(roleBody.getRole())) {
+            if (user.getRoles().contains(Role.of(roleBody.getRole()))) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User role not found");
             } else {
-                user.removeRole(new Role(roleBody.getRole()));
+                user.getRoles().remove(Role.of(roleBody.getRole()));
                 userRepository.save(user);
                 return user.getUserMap();
             }

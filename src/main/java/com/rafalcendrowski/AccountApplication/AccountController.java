@@ -34,7 +34,7 @@ public class AccountController {
                         "Payment for %s in %s already exists".formatted(paymentBody.getEmployee(), paymentBody.getPeriod()));
             } else {
                 Payment payment = new Payment(employee, paymentBody.getPeriod(), paymentBody.getSalary());
-                employee.addPayment(payment);
+                employee.getPayments().add(payment);
                 paymentRepository.save(payment);
                 userRepository.save(employee);
             }
@@ -58,7 +58,7 @@ public class AccountController {
         User employee = userRepository.findByUsername(paymentBody.getEmployee());
         Payment payment = validatePayment(paymentBody, employee);
         paymentRepository.delete(payment);
-        employee.removePayment(payment);
+        employee.getPayments().remove(payment);
         userRepository.save(employee);
         return Map.of("status", "Deleted successfully");
     }

@@ -60,7 +60,7 @@ public class User implements UserDetails {
         this.password = password;
         this.name = name;
         this.lastname = lastname;
-        this.roles.add(new Role("ROLE_USER"));
+        this.roles.add(Role.of("ROLE_USER"));
     }
 
     public Map<String, Object> getUserMap() {
@@ -91,30 +91,6 @@ public class User implements UserDetails {
         return rolesToString;
     }
 
-    public boolean addRole(Role role) {
-        return this.roles.add(role);
-    }
-
-    public boolean removeRole(Role role) {
-        return this.roles.remove(role);
-    }
-
-    public boolean hasRole(Role role) {
-        return this.roles.contains(role);
-    }
-
-    public boolean hasRole(String role) {
-        return this.roles.contains(new Role(role));
-    }
-
-    public void addPayment(Payment payment) {
-        this.payments.add(payment);
-    }
-
-    public void removePayment(Payment payment) {
-        this.payments.remove(payment);
-    }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -138,7 +114,7 @@ public class User implements UserDetails {
 
 @Embeddable
 @Data
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 @NoArgsConstructor
 class Role {
     @Pattern(regexp = "ROLE_(ADMINISTRATOR|USER|ACCOUNTANT)")
