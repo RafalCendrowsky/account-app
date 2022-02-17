@@ -42,6 +42,7 @@ interface UserRepository extends JpaRepository<User, Long> {
 @Entity
 @Table(name = "users")
 @Data
+@NoArgsConstructor
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

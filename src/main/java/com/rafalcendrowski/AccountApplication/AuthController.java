@@ -1,7 +1,11 @@
 package com.rafalcendrowski.AccountApplication;
 
+import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.StringMapMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,6 +29,7 @@ class BreachedPasswordException extends RuntimeException {
 
 @RestController
 @RequestMapping("/api/auth")
+@Log4j2
 public class AuthController {
 
     @Autowired
@@ -33,8 +38,11 @@ public class AuthController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    Logger secLogger;
+
     @PostMapping("/signup")
-    public Map<String, Object> addAccount(@Valid @RequestBody UserBody userBody) {
+    public Map<String, Object> addAccount(@Valid @RequestBody UserBody userBody, @AuthenticationPrincipal User authUser) {
         if (userRepository.findByUsername(userBody.getEmail().toLowerCase()) != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists");
         } else if (isBreached(userBody.getPassword())) {
@@ -46,6 +54,8 @@ public class AuthController {
             user.setRoles(Set.of(Role.of("ROLE_ADMINISTRATOR")));
         }
         userRepository.save(user);
+        String subject = authUser == null ? "Anonymous" : authUser.getName();
+        secLogger.info(LoggerConfig.getEventLogMap(subject, user.getUsername(), "CREATE_USER", "api/auth/signup"));
         return user.getUserMap();
     }
 
@@ -59,6 +69,7 @@ public class AuthController {
         } else {
             user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
             userRepository.save(user);
+            secLogger.info(LoggerConfig.getEventLogMap(user.getName(), user.getUsername(), "CHANGE_PASSWORD", "api/auth/changepass"));
             return Map.of("email", user.getUsername(), "status", "Password has been updated successfully");
         }
     }
@@ -93,5 +104,4 @@ class UserBody {
     @NotEmpty
     @Size(min=12)
     private String password;
-
 }

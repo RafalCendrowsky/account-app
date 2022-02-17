@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="error">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%style{%d}{bright, magenta} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable" />
+        </Console>
+        <JDBC name="databaseAppender" tableName="event_log">
+            <ConnectionFactory class="com.rafalcendrowski.AccountApplication.logging.ConnectionFactory" method="getConnection" />
+            <Column name="date" isEventTimestamp="true" />
+            <ColumnMapping name="Subject" pattern="%K{subject}"/>
+            <ColumnMapping name="Object" pattern="%K{object}"/>
+            <ColumnMapping name="Action" pattern="%K{action}"/>
+            <ColumnMapping name="Path" pattern="%K{path}" />
+        </JDBC>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console" />
+        </Root>
+        <Logger name="sec-logger" additivity="false" >
+            <AppenderRef ref="databaseAppender" />
+            <AppenderRef ref="Console" />
+        </Logger>
+    </Loggers>
+</Configuration>
