@@ -3,7 +3,6 @@ package com.rafalcendrowski.AccountApplication;
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
