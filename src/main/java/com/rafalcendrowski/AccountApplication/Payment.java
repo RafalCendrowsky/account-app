@@ -50,7 +50,5 @@ public class Payment {
         return Objects.hash(employee, period);
     }
 
-    private void setId(Long id) {
-        this.id = id;
-    }
+    private void setId(Long id) {}
 }

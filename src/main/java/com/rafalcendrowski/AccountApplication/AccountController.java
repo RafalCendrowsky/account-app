@@ -65,7 +65,7 @@ public class AccountController {
         return Map.of("status", "Deleted successfully");
     }
 
-    public Payment validatePayment(PaymentBody paymentBody, User employee) {
+    private Payment validatePayment(PaymentBody paymentBody, User employee) {
         if (employee == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found");
         } else {
