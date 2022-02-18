@@ -51,7 +51,7 @@ public class AuthController {
         User user = new User(userBody.getEmail().toLowerCase(Locale.ROOT), passwordEncoder.encode(userBody.getPassword()),
                 userBody.getName(), userBody.getLastname());
         if (userRepository.count() == 0) {
-            user.setRoles(Set.of(Role.of("ROLE_ADMINISTRATOR")));
+            user.setRoles(Set.of(User.Role.ADMINISTRATOR));
         }
         userRepository.save(user);
         String subject = authUser == null ? "Anonymous" : authUser.getName();

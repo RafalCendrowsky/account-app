@@ -56,12 +56,25 @@ public class User implements UserDetails {
     @OneToMany
     private List<Payment> payments;
 
+    public enum Role {
+        USER,
+        ADMINISTRATOR,
+        ACCOUNTANT,
+        AUDITOR;
+
+
+        @Override
+        public String toString() {
+            return "ROLE_".concat(super.toString());
+        }
+    }
+
     public User(String username, String password, String name, String lastname) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.lastname = lastname;
-        this.roles.add(Role.of("ROLE_USER"));
+        this.roles.add(Role.USER);
     }
 
     public Map<String, Object> getUserMap() {
@@ -87,7 +100,7 @@ public class User implements UserDetails {
     public List<String> getRolesAsStrings() {
         List<String> rolesToString = new ArrayList<>();
         for(Role role: roles) {
-            rolesToString.add(role.getRole());
+            rolesToString.add(role.toString());
         }
         return rolesToString;
     }
@@ -111,13 +124,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-}
-
-@Embeddable
-@Data
-@AllArgsConstructor(staticName = "of")
-@NoArgsConstructor
-class Role {
-    @Pattern(regexp = "ROLE_(ADMINISTRATOR|USER|ACCOUNTANT)")
-    private String role;
 }
