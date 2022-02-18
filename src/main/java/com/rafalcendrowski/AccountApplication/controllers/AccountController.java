@@ -1,5 +1,9 @@
-package com.rafalcendrowski.AccountApplication;
+package com.rafalcendrowski.AccountApplication.controllers;
 
+import com.rafalcendrowski.AccountApplication.payment.Payment;
+import com.rafalcendrowski.AccountApplication.payment.PaymentRepository;
+import com.rafalcendrowski.AccountApplication.user.User;
+import com.rafalcendrowski.AccountApplication.user.UserRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

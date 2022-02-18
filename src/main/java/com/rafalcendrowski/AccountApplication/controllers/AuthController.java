@@ -1,5 +1,7 @@
-package com.rafalcendrowski.AccountApplication;
+package com.rafalcendrowski.AccountApplication.controllers;
 
+import com.rafalcendrowski.AccountApplication.user.User;
+import com.rafalcendrowski.AccountApplication.user.UserRepository;
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import lombok.Data;
 import lombok.NoArgsConstructor;

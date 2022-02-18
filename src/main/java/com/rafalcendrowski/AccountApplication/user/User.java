@@ -1,43 +1,14 @@
-package com.rafalcendrowski.AccountApplication;
+package com.rafalcendrowski.AccountApplication.user;
 
+import com.rafalcendrowski.AccountApplication.payment.Payment;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
 import java.util.*;
-
-@Service
-class UserService implements UserDetailsService {
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username.toLowerCase(Locale.ROOT));
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        } else {
-            return user;
-        }
-    }
-
-}
-
-@Repository
-interface UserRepository extends JpaRepository<User, Long> {
-    User findByUsername(String username);
-}
 
 
 @Entity

@@ -1,4 +1,4 @@
-package com.rafalcendrowski.AccountApplication;
+package com.rafalcendrowski.AccountApplication.controllers;
 
 
 import com.rafalcendrowski.AccountApplication.logging.ConnectionFactory;

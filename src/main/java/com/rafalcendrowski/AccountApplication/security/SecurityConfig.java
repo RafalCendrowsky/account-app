@@ -1,8 +1,8 @@
-package com.rafalcendrowski.AccountApplication;
+package com.rafalcendrowski.AccountApplication.security;
 
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
+import com.rafalcendrowski.AccountApplication.user.UserRepository;
 import org.apache.logging.log4j.Logger;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableWebSecurity

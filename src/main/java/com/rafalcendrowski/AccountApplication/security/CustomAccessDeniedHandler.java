@@ -1,4 +1,4 @@
-package com.rafalcendrowski.AccountApplication;
+package com.rafalcendrowski.AccountApplication.security;
 
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import org.apache.logging.log4j.Logger;
