@@ -28,7 +28,7 @@ public class AccountController {
     @PostMapping("/payments")
     public Map<String, String> addPayrolls(@Valid @RequestBody PaymentList<PaymentBody> payments) {
         for(PaymentBody paymentBody : payments) {
-            User employee = userRepository.findByUsername(paymentBody.getEmployee());
+            User employee = userRepository.findByUsername(paymentBody.getEmployee().toLowerCase(Locale.ROOT));
             if (employee == null) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found");
             } else if (paymentRepository.findByEmployeePeriod(employee, paymentBody.getPeriod()) != null) {
@@ -47,7 +47,7 @@ public class AccountController {
     @Transactional
     @PutMapping("/payments")
     public Map<String, String> updatePayroll(@Valid @RequestBody PaymentBody paymentBody) {
-        User employee = userRepository.findByUsername(paymentBody.getEmployee());
+        User employee = userRepository.findByUsername(paymentBody.getEmployee().toLowerCase(Locale.ROOT));
         Payment payment = validatePayment(paymentBody, employee);
         payment.setSalary(paymentBody.getSalary());
         paymentRepository.save(payment);
@@ -57,7 +57,7 @@ public class AccountController {
     @Transactional
     @DeleteMapping("/payments")
     public Map<String, String> deletePayroll(@Valid @RequestBody PaymentBody paymentBody) {
-        User employee = userRepository.findByUsername(paymentBody.getEmployee());
+        User employee = userRepository.findByUsername(paymentBody.getEmployee().toLowerCase(Locale.ROOT));
         Payment payment = validatePayment(paymentBody, employee);
         paymentRepository.delete(payment);
         employee.getPayments().remove(payment);

@@ -8,10 +8,10 @@
         <JDBC name="databaseAppender" tableName="event_log">
             <ConnectionFactory class="com.rafalcendrowski.AccountApplication.logging.ConnectionFactory" method="getConnection" />
             <Column name="date" isEventTimestamp="true" />
-            <ColumnMapping name="Subject" pattern="%K{subject}"/>
-            <ColumnMapping name="Object" pattern="%K{object}"/>
-            <ColumnMapping name="Action" pattern="%K{action}"/>
-            <ColumnMapping name="Path" pattern="%K{path}" />
+            <ColumnMapping name="subject" pattern="%K{subject}"/>
+            <ColumnMapping name="object" pattern="%K{object}"/>
+            <ColumnMapping name="action" pattern="%K{action}"/>
+            <ColumnMapping name="path" pattern="%K{path}" />
         </JDBC>
     </Appenders>
     <Loggers>

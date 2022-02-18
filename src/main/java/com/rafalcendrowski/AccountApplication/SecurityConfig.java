@@ -1,5 +1,8 @@
 package com.rafalcendrowski.AccountApplication;
 
+import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
+import org.apache.logging.log4j.Logger;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableWebSecurity
@@ -49,6 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.POST, "/api/acct/payments").hasRole("ACCOUNTANT")
                 .mvcMatchers(HttpMethod.PUT, "/api/acct/payments").hasRole("ACCOUNTANT")
                 .mvcMatchers(HttpMethod.GET, "/api/empl/payment").hasAnyRole("USER", "ACCOUNTANT")
+                .mvcMatchers(HttpMethod.GET, "/api/security/events").hasRole("AUDITOR")
                 .anyRequest().hasRole("ADMINISTRATOR")
                 .and()
                 .httpBasic()
@@ -83,8 +88,20 @@ class BCryptEncoderConfig {
 
 class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
+    @Autowired
+    Logger secLogger;
+
+    @Autowired
+    UserRepository userRepository;
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        String subject = request.getUserPrincipal() == null ? "Anonymous" : request.getUserPrincipal().getName();
+        String path = request.getRequestURI();
+        if(!path.equals("/error")) {
+            secLogger.info(LoggerConfig.getEventLogMap(subject, path,
+                    "LOGIN_FAILED", path));
+        }
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
     }
 }

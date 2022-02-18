@@ -3,6 +3,7 @@ package com.rafalcendrowski.AccountApplication;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,6 +18,7 @@ import java.util.*;
 
 @Service
 class UserService implements UserDetailsService {
+
     @Autowired
     UserRepository userRepository;
 
@@ -29,6 +31,7 @@ class UserService implements UserDetailsService {
             return user;
         }
     }
+
 }
 
 @Repository

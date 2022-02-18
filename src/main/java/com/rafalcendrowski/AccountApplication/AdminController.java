@@ -1,17 +1,19 @@
 package com.rafalcendrowski.AccountApplication;
 
+import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import javax.validation.constraints.Pattern;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/admin")
@@ -19,6 +21,9 @@ public class AdminController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    Logger secLogger;
 
     @GetMapping("/user")
     public List<Map<String, Object>> getUsers() {
@@ -30,21 +35,23 @@ public class AdminController {
     }
 
     @DeleteMapping("/user/{email}")
-    public Map<String, String> deleteUser(@PathVariable String email) {
-        User user = userRepository.findByUsername(email);
+    public Map<String, String> deleteUser(@PathVariable String email, @AuthenticationPrincipal User admin) {
+        User user = userRepository.findByUsername(email.toLowerCase());
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         } else if (user.getRoles().contains(User.Role.ADMINISTRATOR)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't remove ADMINISTRATOR!");
         } else {
             userRepository.delete(user);
+            secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), email,
+                    "DELETE_USER", "/api/admin/user"));
             return Map.of("status", "Deleted successfully", "user", email);
         }
     }
 
     @PutMapping("/user/role")
-    public Map<String, Object> updateRole(@Valid @RequestBody RoleBody roleBody) {
-        User user = userRepository.findByUsername(roleBody.getUser());
+    public Map<String, Object> updateRole(@Valid @RequestBody RoleBody roleBody, @AuthenticationPrincipal User admin) {
+        User user = userRepository.findByUsername(roleBody.getUser().toLowerCase());
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!");
         } else if (user.getRoles().contains(User.Role.ADMINISTRATOR) != roleBody.getRole().equals(User.Role.ADMINISTRATOR)) {
@@ -52,13 +59,15 @@ public class AdminController {
         } else {
             user.getRoles().add(roleBody.getRole());
             userRepository.save(user);
+            secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Grant role %s to %s".formatted(roleBody.getRole(), roleBody.getUser()),
+                    "GRANT_ROLE", "/api/admin/user/role"));
             return user.getUserMap();
         }
     }
 
     @DeleteMapping("/user/role")
-    public Map<String, Object> deleteRole(@Valid @RequestBody RoleBody roleBody) {
-        User user = userRepository.findByUsername(roleBody.getUser());
+    public Map<String, Object> deleteRole(@Valid @RequestBody RoleBody roleBody, @AuthenticationPrincipal User admin) {
+        User user = userRepository.findByUsername(roleBody.getUser().toLowerCase(Locale.ROOT));
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!");
         } else {
@@ -72,6 +81,8 @@ public class AdminController {
                 }
                 user.getRoles().remove(roleBody.getRole());
                 userRepository.save(user);
+                secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Remove role %s from %s".formatted(roleBody.getRole(), roleBody.getUser()),
+                        "REMOVE_ROLE", "/api/admin/user/role"));
                 return user.getUserMap();
             }
         }
@@ -85,4 +96,13 @@ class RoleBody {
     @NotEmpty
     private String user;
     private User.Role role;
+}
+
+@Data
+@NoArgsConstructor
+class LockBody {
+    @NotEmpty
+    private String user;
+    @Pattern(regexp = "LOCK|UNLOCK")
+    private String operation;
 }

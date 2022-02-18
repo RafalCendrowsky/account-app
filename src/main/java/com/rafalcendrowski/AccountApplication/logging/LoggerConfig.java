@@ -6,6 +6,7 @@ import org.apache.logging.log4j.message.StringMapMessage;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 @Configuration
