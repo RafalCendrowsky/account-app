@@ -2,8 +2,10 @@ package com.rafalcendrowski.AccountApplication.controllers;
 
 import com.rafalcendrowski.AccountApplication.payment.Payment;
 import com.rafalcendrowski.AccountApplication.payment.PaymentRepository;
+import com.rafalcendrowski.AccountApplication.payment.PaymentService;
 import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.user.UserRepository;
+import com.rafalcendrowski.AccountApplication.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,10 +24,10 @@ import java.util.Map;
 public class EmployeeController {
 
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
     @Autowired
-    PaymentRepository paymentRepository;
+    PaymentService paymentService;
 
     @GetMapping(value = "/payment", params = {"period"})
     public Map<String, Object> getPayment(@RequestParam String period,
@@ -33,12 +35,8 @@ public class EmployeeController {
         if (!period.matches("(0[1-9]|1[0-2])-\\d\\d\\d\\d")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid period");
         }
-        Payment payment = paymentRepository.findByEmployeePeriod(user, period);
-        if (payment == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment for %s not found".formatted(period));
-        } else {
-            return getPaymentMap(user, payment);
-        }
+        Payment payment = paymentService.loadByEmployeeAndPeriod(user, period);
+        return getPaymentMap(user, payment);
     }
 
     private Map<String, Object> getPaymentMap(User user, Payment payment) {
@@ -53,7 +51,7 @@ public class EmployeeController {
     @GetMapping("/payment")
     public List<Map<String, Object>> getPayment(@AuthenticationPrincipal User user) {
         List<Map<String, Object>> payments = new ArrayList<>();
-        for(Payment payment: paymentRepository.findByEmployee(user)) {
+        for(Payment payment: paymentService.loadByEmployee(user)) {
             payments.add(getPaymentMap(user, payment));
         }
         return payments;

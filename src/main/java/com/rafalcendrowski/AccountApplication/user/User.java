@@ -42,7 +42,7 @@ public class User implements UserDetails {
     }
 
     public User(String username, String password, String name, String lastname) {
-        this.username = username;
+        this.username = username.toLowerCase(Locale.ROOT);
         this.password = password;
         this.name = name;
         this.lastname = lastname;
@@ -69,12 +69,36 @@ public class User implements UserDetails {
         this.id = id;
     }
 
+    public void setUsername(String username) {
+        this.username = username.toLowerCase(Locale.ROOT);
+    }
+
     public List<String> getRolesAsStrings() {
         List<String> rolesToString = new ArrayList<>();
         for(Role role: roles) {
             rolesToString.add(role.toString());
         }
         return rolesToString;
+    }
+
+    public boolean hasRole(Role role) {
+        return roles.contains(role);
+    }
+
+    public boolean addRole(Role role) {
+        return roles.add(role);
+    }
+
+    public boolean removeRole(Role role) {
+        return roles.remove(role);
+    }
+
+    public boolean addPayment(Payment payment) {
+        return payments.add(payment);
+    }
+
+    public boolean removePayment(Payment payment) {
+        return  payments.remove(payment);
     }
 
     @Override

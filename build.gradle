@@ -26,6 +26,8 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.junit.jupiter:junit.jupiter:5.4.0'
+	testCompileOnly 'org.mockito:mockito-junit-jupiter:4.3.1'
 }
 
 configurations.implementation {

@@ -6,11 +6,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ConnectionFactory {
-    private static interface Singleton {
-        final ConnectionFactory INSTANCE = new ConnectionFactory();
-    }
 
     private final MysqlDataSource dataSource;
+
+    private final static ConnectionFactory INSTANCE = new ConnectionFactory();
 
     private ConnectionFactory() {
         MysqlDataSource tempSource = new MysqlDataSource();
@@ -21,6 +20,6 @@ public class ConnectionFactory {
     }
 
     public static Connection getConnection() throws SQLException {
-        return Singleton.INSTANCE.dataSource.getConnection("rcen", "password");
+        return INSTANCE.dataSource.getConnection("rcen", "password");
     }
 }

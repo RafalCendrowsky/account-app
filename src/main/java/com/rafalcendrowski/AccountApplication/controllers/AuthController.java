@@ -3,6 +3,7 @@ package com.rafalcendrowski.AccountApplication.controllers;
 import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.user.UserRepository;
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
+import com.rafalcendrowski.AccountApplication.user.UserService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,10 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Password has been breached")
@@ -34,27 +32,29 @@ class BreachedPasswordException extends RuntimeException {
 public class AuthController {
 
     @Autowired
-    UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    Logger secLogger;
+    private Logger secLogger;
+
+    private final List<String> breachedPasswords = new ArrayList<>();
 
     @PostMapping("/signup")
     public Map<String, Object> addAccount(@Valid @RequestBody UserBody userBody, @AuthenticationPrincipal User authUser) {
-        if (userRepository.findByUsername(userBody.getEmail().toLowerCase()) != null) {
+        if (userService.hasUser(userBody.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists");
         } else if (isBreached(userBody.getPassword())) {
             throw new BreachedPasswordException();
         }
-        User user = new User(userBody.getEmail().toLowerCase(Locale.ROOT), passwordEncoder.encode(userBody.getPassword()),
+        User user = new User(userBody.getEmail(), passwordEncoder.encode(userBody.getPassword()),
                 userBody.getName(), userBody.getLastname());
-        if (userRepository.count() == 0) {
+        if (userService.loadAllUsers().size() == 0) {
             user.setRoles(Set.of(User.Role.ADMINISTRATOR));
         }
-        userRepository.save(user);
+        userService.saveUser(user);
         String subject = authUser == null ? "Anonymous" : authUser.getName();
         secLogger.info(LoggerConfig.getEventLogMap(subject, user.getUsername(), "CREATE_USER", "api/auth/signup"));
         return user.getUserMap();
@@ -69,17 +69,14 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwords must be different");
         } else {
             user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
-            userRepository.save(user);
+            userService.saveUser(user);
             secLogger.info(LoggerConfig.getEventLogMap(user.getName(), user.getUsername(), "CHANGE_PASSWORD", "api/auth/changepass"));
             return Map.of("email", user.getUsername(), "status", "Password has been updated successfully");
         }
     }
 
     public boolean isBreached(String password) {
-        return List.of("PasswordForJanuary", "PasswordForFebruary", "PasswordForMarch",
-                "PasswordForApril", "PasswordForMay", "PasswordForJune", "PasswordForJuly",
-                "PasswordForAugust", "PasswordForSeptember", "PasswordForOctober", "PasswordForNovember",
-                "PasswordForDecember").contains(password);
+        return breachedPasswords.contains(password);
     }
 
 }

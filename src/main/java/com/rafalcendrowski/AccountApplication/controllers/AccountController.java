@@ -1,9 +1,9 @@
 package com.rafalcendrowski.AccountApplication.controllers;
 
 import com.rafalcendrowski.AccountApplication.payment.Payment;
-import com.rafalcendrowski.AccountApplication.payment.PaymentRepository;
+import com.rafalcendrowski.AccountApplication.payment.PaymentService;
 import com.rafalcendrowski.AccountApplication.user.User;
-import com.rafalcendrowski.AccountApplication.user.UserRepository;
+import com.rafalcendrowski.AccountApplication.user.UserService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,26 +23,24 @@ import java.util.*;
 public class AccountController {
 
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
     @Autowired
-    PaymentRepository paymentRepository;
+    PaymentService paymentService;
 
     @Transactional
     @PostMapping("/payments")
     public Map<String, String> addPayrolls(@Valid @RequestBody PaymentList<PaymentBody> payments) {
         for(PaymentBody paymentBody : payments) {
-            User employee = userRepository.findByUsername(paymentBody.getEmployee().toLowerCase(Locale.ROOT));
-            if (employee == null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found");
-            } else if (paymentRepository.findByEmployeePeriod(employee, paymentBody.getPeriod()) != null) {
+            User employee = userService.loadByUsername(paymentBody.getEmployee());
+            if (paymentService.hasPayment(employee, paymentBody.getPeriod())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "Payment for %s in %s already exists".formatted(paymentBody.getEmployee(), paymentBody.getPeriod()));
             } else {
                 Payment payment = new Payment(employee, paymentBody.getPeriod(), paymentBody.getSalary());
-                employee.getPayments().add(payment);
-                paymentRepository.save(payment);
-                userRepository.save(employee);
+                employee.addPayment(payment);
+                paymentService.savePayment(payment);
+                userService.saveUser(employee);
             }
         }
         return Map.of("status", "Added successfully");
@@ -51,36 +49,22 @@ public class AccountController {
     @Transactional
     @PutMapping("/payments")
     public Map<String, String> updatePayroll(@Valid @RequestBody PaymentBody paymentBody) {
-        User employee = userRepository.findByUsername(paymentBody.getEmployee().toLowerCase(Locale.ROOT));
-        Payment payment = validatePayment(paymentBody, employee);
+        User employee = userService.loadByUsername(paymentBody.getEmployee());
+        Payment payment = paymentService.loadByEmployeeAndPeriod(employee, paymentBody.getPeriod());
         payment.setSalary(paymentBody.getSalary());
-        paymentRepository.save(payment);
+        paymentService.savePayment(payment);
         return Map.of("status", "Updated successfully");
     }
 
     @Transactional
     @DeleteMapping("/payments")
     public Map<String, String> deletePayroll(@Valid @RequestBody PaymentBody paymentBody) {
-        User employee = userRepository.findByUsername(paymentBody.getEmployee().toLowerCase(Locale.ROOT));
-        Payment payment = validatePayment(paymentBody, employee);
-        paymentRepository.delete(payment);
-        employee.getPayments().remove(payment);
-        userRepository.save(employee);
+        User employee = userService.loadByUsername(paymentBody.getEmployee());
+        Payment payment = paymentService.loadByEmployeeAndPeriod(employee, paymentBody.getPeriod());
+        employee.removePayment(payment);
+        paymentService.deletePayment(payment);
+        userService.saveUser(employee);
         return Map.of("status", "Deleted successfully");
-    }
-
-    private Payment validatePayment(PaymentBody paymentBody, User employee) {
-        if (employee == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found");
-        } else {
-            Payment payment = paymentRepository.findByEmployeePeriod(employee, paymentBody.getPeriod());
-            if (payment == null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Payment for %s in %s not found".formatted(paymentBody.getEmployee(), paymentBody.getPeriod()));
-            } else {
-                return payment;
-            }
-        }
     }
 }
 
