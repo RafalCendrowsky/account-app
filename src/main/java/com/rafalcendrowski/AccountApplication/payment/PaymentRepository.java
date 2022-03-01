@@ -1,6 +1,5 @@
 package com.rafalcendrowski.AccountApplication.payment;
 
-import com.rafalcendrowski.AccountApplication.payment.Payment;
 import com.rafalcendrowski.AccountApplication.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
