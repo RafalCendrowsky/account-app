@@ -21,6 +21,9 @@ class PaymentServiceTest {
 
     @Test
     void savePayment() {
+        Payment payment = new Payment();
+        paymentService.savePayment(payment);
+        verify(paymentRepository).save(payment);
     }
 
     @Test
