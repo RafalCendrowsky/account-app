@@ -8,9 +8,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.parameters.P;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentServiceTest {
@@ -51,10 +54,10 @@ class PaymentServiceTest {
 
     @Test
     void loadByEmployee() {
-    }
-
-    @Test
-    void loadByEmployee_invalid_arg() {
+        Payment payment = new Payment();
+        User user = new User();
+        when(paymentRepository.findByEmployee(user)).thenReturn(new Payment[]{payment});
+        assertEquals(paymentService.loadByEmployee(user), List.of(payment));
     }
 
     @Test
