@@ -61,5 +61,9 @@ class UserServicelTest {
 
     @Test
     void hasUser() {
+        User user = new User();
+        when(userRepository.findByUsername("test")).thenReturn(user);
+        assertTrue(userService.hasUser("test"));
+        assertFalse(userService.hasUser("not test"));
     }
 }
