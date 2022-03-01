@@ -6,7 +6,7 @@ public interface UserService {
 
     public User loadByUsername(String username);
 
-    public User saveUser(User user);
+    public void saveUser(User user);
 
     public void deleteUser(User user);
 

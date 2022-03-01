@@ -1,10 +1,6 @@
 package com.rafalcendrowski.AccountApplication.user;
 
-import com.rafalcendrowski.AccountApplication.payment.Payment;
-import com.rafalcendrowski.AccountApplication.user.User;
-import com.rafalcendrowski.AccountApplication.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -38,8 +34,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
     }
 
-    public User saveUser(User user) {
-        return userRepository.save(user);
+    public void saveUser(User user) {
+        userRepository.save(user);
     }
 
     public void deleteUser(User user) {
