@@ -28,6 +28,9 @@ class PaymentServiceTest {
 
     @Test
     void deletePayment() {
+        Payment payment = new Payment();
+        paymentService.deletePayment(payment);
+        verify(paymentRepository).delete(payment);
     }
 
     @Test
