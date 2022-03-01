@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
     }
 
-    public User loadByUsername(String username) {
+    public User loadByUsername(String username) throws IllegalArgumentException {
         User user = userRepository.findByUsername(username.toLowerCase(Locale.ROOT));
         if (user == null) {
             throw new IllegalArgumentException("User not found");
