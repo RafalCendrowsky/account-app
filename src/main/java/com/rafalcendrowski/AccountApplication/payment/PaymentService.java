@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface PaymentService {
 
-    public void savePayment(Payment payment);
+    public Payment savePayment(Payment payment);
 
     public void deletePayment(Payment payment);
 
