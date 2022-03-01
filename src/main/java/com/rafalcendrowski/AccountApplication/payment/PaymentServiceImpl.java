@@ -2,16 +2,17 @@ package com.rafalcendrowski.AccountApplication.payment;
 
 import com.rafalcendrowski.AccountApplication.user.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
-    private final PaymentRepository paymentRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     public void savePayment(Payment payment) {
         paymentRepository.save(payment);
