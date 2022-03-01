@@ -46,6 +46,7 @@ class PaymentServiceTest {
 
     @Test
     void loadByEmployeeAndPeriod_invalid_args() {
+        assertThrows(IllegalArgumentException.class, () -> paymentService.loadByEmployeeAndPeriod(null, "test"));
     }
 
     @Test
