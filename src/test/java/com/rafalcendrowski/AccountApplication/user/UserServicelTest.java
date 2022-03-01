@@ -26,6 +26,14 @@ class UserServicelTest {
     UserService userService = new UserServiceImpl();
 
     @Test
+    void loadByUsername() {
+        try {
+            userService.loadByUsername("test");
+        } catch (IllegalArgumentException ignored) {}
+        verify(userRepository).findByUsername("test");
+    }
+
+    @Test
     void loadByUsername_invalid_args() {
         assertThrows(IllegalArgumentException.class, () -> userService.loadByUsername("test"));
     }
