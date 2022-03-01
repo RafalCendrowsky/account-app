@@ -62,5 +62,9 @@ class PaymentServiceTest {
 
     @Test
     void hasPayment() {
+        User user = new User();
+        when(paymentRepository.findByEmployeePeriod(user, "test")).thenReturn(new Payment());
+        assertTrue(paymentService.hasPayment(user, "test"));
+        assertFalse(paymentService.hasPayment(user, "not test"));
     }
 }
