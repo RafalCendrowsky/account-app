@@ -21,7 +21,7 @@ public class PaymentServiceImpl implements PaymentService {
         paymentRepository.delete(payment);
     }
 
-    public Payment loadByEmployeeAndPeriod(User user, String period) {
+    public Payment loadByEmployeeAndPeriod(User user, String period) throws IllegalArgumentException{
         Payment payment = paymentRepository.findByEmployeePeriod(user, period);
         if (payment == null) {
             throw new IllegalArgumentException("Payment does not exist");
