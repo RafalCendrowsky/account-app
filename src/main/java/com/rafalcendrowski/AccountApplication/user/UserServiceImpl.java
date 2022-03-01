@@ -26,6 +26,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
     }
 
+    @Override
     public User loadByUsername(String username) throws IllegalArgumentException {
         User user = userRepository.findByUsername(username.toLowerCase(Locale.ROOT));
         if (user == null) {
@@ -35,18 +36,22 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
     }
 
+    @Override
     public void saveUser(User user) {
-        userRepository.save(user);
+
     }
 
+    @Override
     public void deleteUser(User user) {
         userRepository.delete(user);
     }
 
+    @Override
     public List<User> loadAllUsers() {
         return userRepository.findAll();
     }
 
+    @Override
     public boolean hasUser(String username) {
         return (userRepository.findByUsername(username.toLowerCase(Locale.ROOT)) != null);
     }

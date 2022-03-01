@@ -14,14 +14,17 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private PaymentRepository paymentRepository;
 
+    @Override
     public void savePayment(Payment payment) {
         paymentRepository.save(payment);
     }
 
+    @Override
     public void deletePayment(Payment payment) {
         paymentRepository.delete(payment);
     }
 
+    @Override
     public Payment loadByEmployeeAndPeriod(User user, String period) throws IllegalArgumentException{
         Payment payment = paymentRepository.findByEmployeePeriod(user, period);
         if (payment == null) {
@@ -31,10 +34,12 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    @Override
     public List<Payment> loadByEmployee(User employee) {
         return Arrays.stream(paymentRepository.findByEmployee(employee)).toList();
     }
 
+    @Override
     public boolean hasPayment(User employee, String period) {
         Payment payment = paymentRepository.findByEmployeePeriod(employee, period);
         return (payment != null);
