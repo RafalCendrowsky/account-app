@@ -13,8 +13,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
 
-    public Payment savePayment(Payment payment) {
-        return paymentRepository.save(payment);
+    public void savePayment(Payment payment) {
+        paymentRepository.save(payment);
     }
 
     public void deletePayment(Payment payment) {

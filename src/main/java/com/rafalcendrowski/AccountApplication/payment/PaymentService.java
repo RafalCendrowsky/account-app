@@ -2,12 +2,11 @@ package com.rafalcendrowski.AccountApplication.payment;
 
 import com.rafalcendrowski.AccountApplication.user.User;
 
-import java.util.Arrays;
 import java.util.List;
 
 public interface PaymentService {
 
-    public Payment savePayment(Payment payment);
+    public void savePayment(Payment payment);
 
     public void deletePayment(Payment payment);
 
