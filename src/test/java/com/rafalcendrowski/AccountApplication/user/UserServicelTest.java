@@ -26,7 +26,7 @@ class UserServicelTest {
     UserService userService = new UserServiceImpl();
 
     @Test
-    void loadByUsername() {
+    void loadByUsername_invalid_args() {
         assertThrows(IllegalArgumentException.class, () -> userService.loadByUsername("test"));
     }
 
