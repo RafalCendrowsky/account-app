@@ -1,5 +1,6 @@
 package com.rafalcendrowski.AccountApplication.payment;
 
+import com.rafalcendrowski.AccountApplication.user.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -8,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.parameters.P;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,6 +37,11 @@ class PaymentServiceTest {
 
     @Test
     void loadByEmployeeAndPeriod() {
+        User user = new User();
+        try {
+            paymentService.loadByEmployeeAndPeriod(user, "test");
+        } catch (IllegalArgumentException ignored) {}
+        verify(paymentRepository).findByEmployeePeriod(user, "test");
     }
 
     @Test
