@@ -8,6 +8,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,6 +46,9 @@ class UserServicelTest {
 
     @Test
     void loadAllUsers() {
+        User user = new User();
+        when(userRepository.findAll()).thenReturn(List.of(user));
+        assertEquals(userService.loadAllUsers(), List.of(user));
     }
 
     @Test
