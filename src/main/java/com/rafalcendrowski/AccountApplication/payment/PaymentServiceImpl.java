@@ -29,7 +29,7 @@ public class PaymentServiceImpl implements PaymentService {
     public Payment loadByEmployeeAndPeriod(User user, String period) throws IllegalArgumentException{
         Payment payment = paymentRepository.findByEmployeePeriod(user, period);
         if (payment == null) {
-            throw new PaymentNotFoundException("Payment does not exist");
+            throw new CustomNotFoundException("Payment does not exist");
         } else {
             return payment;
         }
@@ -44,11 +44,5 @@ public class PaymentServiceImpl implements PaymentService {
     public boolean hasPayment(User employee, String period) {
         Payment payment = paymentRepository.findByEmployeePeriod(employee, period);
         return (payment != null);
-    }
-}
-
-class PaymentNotFoundException extends CustomNotFoundException {
-    public PaymentNotFoundException(String message) {
-        super(message);
     }
 }
