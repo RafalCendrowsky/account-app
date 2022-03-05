@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public User loadByUsername(String username) throws IllegalArgumentException {
         User user = userRepository.findByUsername(username.toLowerCase(Locale.ROOT));
         if (user == null) {
-            throw new IllegalArgumentException("User not found");
+            throw new UserNotFoundException("User not found");
         } else {
             return user;
         }
@@ -53,5 +53,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public boolean hasUser(String username) {
         return (userRepository.findByUsername(username.toLowerCase(Locale.ROOT)) != null);
+    }
+}
+
+class UserNotFoundException extends RuntimeException {
+    public UserNotFoundException(String message) {
+        super(message);
     }
 }
