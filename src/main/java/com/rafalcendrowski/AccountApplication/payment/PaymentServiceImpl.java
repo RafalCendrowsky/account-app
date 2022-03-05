@@ -1,5 +1,6 @@
 package com.rafalcendrowski.AccountApplication.payment;
 
+import com.rafalcendrowski.AccountApplication.exceptions.CustomNotFoundException;
 import com.rafalcendrowski.AccountApplication.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 }
 
-class PaymentNotFoundException extends RuntimeException {
+class PaymentNotFoundException extends CustomNotFoundException {
     public PaymentNotFoundException(String message) {
         super(message);
     }
