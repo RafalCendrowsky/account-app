@@ -1,5 +1,6 @@
 package com.rafalcendrowski.AccountApplication.user;
 
+import com.rafalcendrowski.AccountApplication.exceptions.CustomNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 }
 
-class UserNotFoundException extends RuntimeException {
+class UserNotFoundException extends CustomNotFoundException {
     public UserNotFoundException(String message) {
         super(message);
     }
