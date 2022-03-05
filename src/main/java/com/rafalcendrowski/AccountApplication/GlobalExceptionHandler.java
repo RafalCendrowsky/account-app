@@ -1,4 +1,4 @@
-package com.rafalcendrowski.AccountApplication.controllers;
+package com.rafalcendrowski.AccountApplication;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
