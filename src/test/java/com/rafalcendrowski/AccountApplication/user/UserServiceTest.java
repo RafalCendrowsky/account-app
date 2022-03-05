@@ -15,7 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UserServicelTest {
+class UserServiceTest {
 
     @Mock
     UserRepository userRepository;
