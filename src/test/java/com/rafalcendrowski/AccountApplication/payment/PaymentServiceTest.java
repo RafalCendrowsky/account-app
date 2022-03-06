@@ -6,12 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,7 +42,7 @@ class PaymentServiceTest {
         try {
             paymentService.loadByEmployeeAndPeriod(user, "test");
         } catch (IllegalArgumentException ignored) {}
-        verify(paymentRepository).findByEmployeePeriod(user, "test");
+        verify(paymentRepository).findByEmployeeAndPeriod(user, "test");
     }
 
     @Test
@@ -63,7 +61,7 @@ class PaymentServiceTest {
     @Test
     void hasPayment() {
         User user = new User();
-        when(paymentRepository.findByEmployeePeriod(user, "test")).thenReturn(new Payment());
+        when(paymentRepository.findByEmployeeAndPeriod(user, "test")).thenReturn(new Payment());
         assertTrue(paymentService.hasPayment(user, "test"));
         assertFalse(paymentService.hasPayment(user, "not test"));
     }

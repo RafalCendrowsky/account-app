@@ -2,7 +2,6 @@ package com.rafalcendrowski.AccountApplication.payment;
 
 import com.rafalcendrowski.AccountApplication.exceptions.CustomNotFoundException;
 import com.rafalcendrowski.AccountApplication.user.User;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment loadByEmployeeAndPeriod(User user, String period) throws IllegalArgumentException{
-        Payment payment = paymentRepository.findByEmployeePeriod(user, period);
+        Payment payment = paymentRepository.findByEmployeeAndPeriod(user, period);
         if (payment == null) {
             throw new CustomNotFoundException("Payment does not exist");
         } else {
@@ -42,7 +41,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public boolean hasPayment(User employee, String period) {
-        Payment payment = paymentRepository.findByEmployeePeriod(employee, period);
+        Payment payment = paymentRepository.findByEmployeeAndPeriod(employee, period);
         return (payment != null);
     }
 }
