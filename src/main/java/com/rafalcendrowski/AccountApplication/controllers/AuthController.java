@@ -41,7 +41,7 @@ public class AuthController {
     @Autowired
     private Logger secLogger;
 
-    private final List<String> breachedPasswords = new ArrayList<>();
+    private final Set<String> breachedPasswords = Set.of("breachedPassword");
 
     @PostMapping("/signup")
     public Map<String, Object> addAccount(@Valid @RequestBody UserBody userBody, @AuthenticationPrincipal User authUser) {
