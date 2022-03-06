@@ -48,14 +48,6 @@ public class User implements UserDetails {
         this.lastname = lastname;
     }
 
-    public Map<String, Object> getUserMap() {
-        List<String> rolesList = getRolesAsStrings();
-        rolesList.sort(String::compareTo);
-        String id = (this.id == null) ? "null" : String.valueOf(this.id);
-        return Map.of("lastname", lastname, "name", name,
-                "id", id, "email", username, "roles", rolesList);
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
@@ -71,14 +63,6 @@ public class User implements UserDetails {
 
     public void setUsername(String username) {
         this.username = username.toLowerCase(Locale.ROOT);
-    }
-
-    public List<String> getRolesAsStrings() {
-        List<String> rolesToString = new ArrayList<>();
-        for(Role role: roles) {
-            rolesToString.add(role.toString());
-        }
-        return rolesToString;
     }
 
     public boolean hasRole(Role role) {

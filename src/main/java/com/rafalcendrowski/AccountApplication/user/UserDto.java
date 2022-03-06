@@ -1,26 +1,28 @@
 package com.rafalcendrowski.AccountApplication.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.*;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class UserRegisterDto {
-    @NotEmpty
+public class UserDto {
+    private Long id;
     private String name;
-    @NotEmpty
     private String lastname;
-    @NotNull
-    @Email
-    @Pattern(regexp = ".*@acme\\.com")
     private String email;
-    @NotEmpty
-    @Size(min = 12)
-    @JsonIgnore
-    private String password;
+    private Set<User.Role> roles;
+
+    public UserDto(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.lastname = user.getLastname();
+        this.email = user.getUsername();
+        this.roles = user.getRoles();
+    }
+
+    public static UserDto of(User user) {
+        return new UserDto(user);
+    }
 }
