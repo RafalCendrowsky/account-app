@@ -66,8 +66,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return (userRepository.findByUsername(username.toLowerCase(Locale.ROOT)) != null);
     }
 
-    @Override
-    public void grantRole(User user) {
+    private void grantRole(User user) {
         if (userRepository.findAll().size() == 0) {
             user.addRole(User.Role.ADMINISTRATOR);
         } else {
