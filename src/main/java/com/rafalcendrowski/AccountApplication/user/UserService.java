@@ -4,13 +4,13 @@ import java.util.List;
 
 public interface UserService {
 
-    public User loadByUsername(String username) throws IllegalArgumentException;
+    User loadByUsername(String username) throws IllegalArgumentException;
 
-    public User saveUser(User user);
+    User saveUser(User user);
 
-    public void deleteUser(User user);
+    void deleteUser(User user);
 
-    public List<User> loadAllUsers();
+    List<User> loadAllUsers();
 
-    public boolean hasUser(String username);
+    boolean hasUser(String username);
 }

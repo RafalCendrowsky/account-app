@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface PaymentService {
 
-    public Payment savePayment(Payment payment);
+    Payment savePayment(Payment payment);
 
-    public void deletePayment(Payment payment);
+    void deletePayment(Payment payment);
 
-    public Payment loadByEmployeeAndPeriod(User user, String period) throws IllegalArgumentException;
+    Payment loadByEmployeeAndPeriod(User user, String period) throws IllegalArgumentException;
 
-    public List<Payment> loadByEmployee(User employee);
+    List<Payment> loadByEmployee(User employee);
 
-    public boolean hasPayment(User employee, String period);
+    boolean hasPayment(User employee, String period);
 }
