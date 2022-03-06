@@ -42,7 +42,7 @@ public class UserController {
     @GetMapping
     public CollectionModel<EntityModel<UserDto>> getUsers() {
         List<EntityModel<UserDto>> userList = userService.loadAllUsers().stream()
-                .map(userModelAssembler::toModel).collect(Collectors.toList());
+                .map(userModelAssembler::toModel).toList();
         return CollectionModel.of(userList,
                 linkTo(methodOn(UserController.class).getUsers()).withSelfRel());
     }
