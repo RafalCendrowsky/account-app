@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public User updateUser(User user) throws IllegalArgumentException{
+    public User updateUser(User user) throws IllegalArgumentException {
         if (hasUser(user.getUsername())) {
             return userRepository.save(user);
         } else {

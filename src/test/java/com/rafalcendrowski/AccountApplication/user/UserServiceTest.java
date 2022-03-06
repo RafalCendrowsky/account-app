@@ -37,9 +37,18 @@ class UserServiceTest {
     }
 
     @Test
-    void saveUser() {
+    void registerUser() {
         when(userRepository.save(any(User.class))).then(returnsFirstArg());
         User user = new User();
+        assertEquals(userService.registerUser(user), user);
+    }
+
+    @Test
+    void updateUser() {
+        when(userRepository.save(any(User.class))).then(returnsFirstArg());
+        when(userRepository.findByUsername(any(String.class))).thenReturn(new User());
+        User user = new User();
+        user.setUsername("test");
         assertEquals(userService.updateUser(user), user);
     }
 
