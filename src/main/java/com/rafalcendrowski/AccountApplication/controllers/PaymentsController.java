@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -95,13 +96,13 @@ public class PaymentsController {
 
     @Transactional
     @DeleteMapping
-    public Map<String, String> deletePayroll(@Valid @RequestBody PaymentDto paymentBody) {
+    public ResponseEntity<?> deletePayroll(@Valid @RequestBody PaymentDto paymentBody) {
         User employee = userService.loadByUsername(paymentBody.getEmployee());
         Payment payment = paymentService.loadByEmployeeAndPeriod(employee, paymentBody.getPeriod());
         employee.removePayment(payment);
         paymentService.deletePayment(payment);
         userService.updateUser(employee);
-        return Map.of("status", "Deleted successfully");
+        return ResponseEntity.noContent().build();
     }
 }
 
