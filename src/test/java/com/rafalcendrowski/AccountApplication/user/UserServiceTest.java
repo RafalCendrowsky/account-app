@@ -1,5 +1,6 @@
 package com.rafalcendrowski.AccountApplication.user;
 
+import com.rafalcendrowski.AccountApplication.exceptions.CustomNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,13 +28,13 @@ class UserServiceTest {
     void loadByUsername() {
         try {
             userService.loadByUsername("test");
-        } catch (IllegalArgumentException ignored) {}
+        } catch (CustomNotFoundException ignored) {}
         verify(userRepository).findByUsername("test");
     }
 
     @Test
     void loadByUsername_invalid_args() {
-        assertThrows(IllegalArgumentException.class, () -> userService.loadByUsername("test"));
+        assertThrows(CustomNotFoundException.class, () -> userService.loadByUsername("test"));
     }
 
     @Test
