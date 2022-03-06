@@ -46,7 +46,6 @@ public class User implements UserDetails {
         this.password = password;
         this.name = name;
         this.lastname = lastname;
-        this.roles.add(Role.USER);
     }
 
     public Map<String, Object> getUserMap() {
