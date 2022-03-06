@@ -40,7 +40,7 @@ public class AccountController {
                 Payment payment = new Payment(employee, paymentBody.getPeriod(), paymentBody.getSalary());
                 employee.addPayment(payment);
                 paymentService.savePayment(payment);
-                userService.saveUser(employee);
+                userService.updateUser(employee);
             }
         }
         return Map.of("status", "Added successfully");
@@ -63,7 +63,7 @@ public class AccountController {
         Payment payment = paymentService.loadByEmployeeAndPeriod(employee, paymentBody.getPeriod());
         employee.removePayment(payment);
         paymentService.deletePayment(payment);
-        userService.saveUser(employee);
+        userService.updateUser(employee);
         return Map.of("status", "Deleted successfully");
     }
 }

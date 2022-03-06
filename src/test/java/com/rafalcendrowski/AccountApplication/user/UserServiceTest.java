@@ -40,7 +40,7 @@ class UserServiceTest {
     void saveUser() {
         when(userRepository.save(any(User.class))).then(returnsFirstArg());
         User user = new User();
-        assertEquals(userService.saveUser(user), user);
+        assertEquals(userService.updateUser(user), user);
     }
 
     @Test

@@ -43,8 +43,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public User saveUser(User user) {
-        return userRepository.save(user);
+    public User updateUser(User user) throws IllegalArgumentException{
+        if (hasUser(user.getUsername())) {
+            return userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("User does not exist");
+        }
     }
 
     @Override

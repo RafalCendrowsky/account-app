@@ -1,7 +1,6 @@
 package com.rafalcendrowski.AccountApplication.controllers;
 
 import com.rafalcendrowski.AccountApplication.user.User;
-import com.rafalcendrowski.AccountApplication.user.UserRepository;
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import com.rafalcendrowski.AccountApplication.user.UserService;
 import lombok.Data;
@@ -57,7 +56,7 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot combine ADMINISTRATOR with other roles");
         } else {
             if (user.addRole(roleBody.getRole())) {
-                userService.saveUser(user);
+                userService.updateUser(user);
                 secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Grant role %s to %s".formatted(roleBody.getRole(), roleBody.getUser()),
                         "GRANT_ROLE", "/api/admin/user/role"));
             }
@@ -77,7 +76,7 @@ public class AdminController {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot remove user's only role");
             }
             user.getRoles().remove(roleBody.getRole());
-            userService.saveUser(user);
+            userService.updateUser(user);
             secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Remove role %s from %s".formatted(roleBody.getRole(), roleBody.getUser()),
                     "REMOVE_ROLE", "/api/admin/user/role"));
             return user.getUserMap();

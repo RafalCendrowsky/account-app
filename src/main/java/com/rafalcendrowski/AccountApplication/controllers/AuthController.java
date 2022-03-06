@@ -1,7 +1,6 @@
 package com.rafalcendrowski.AccountApplication.controllers;
 
 import com.rafalcendrowski.AccountApplication.user.User;
-import com.rafalcendrowski.AccountApplication.user.UserRepository;
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import com.rafalcendrowski.AccountApplication.user.UserService;
 import lombok.AllArgsConstructor;
@@ -67,7 +66,7 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwords must be different");
         } else {
             user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
-            userService.saveUser(user);
+            userService.updateUser(user);
             secLogger.info(LoggerConfig.getEventLogMap(user.getName(), user.getUsername(), "CHANGE_PASSWORD", "api/auth/changepass"));
             return Map.of("email", user.getUsername(), "status", "Password has been updated successfully");
         }

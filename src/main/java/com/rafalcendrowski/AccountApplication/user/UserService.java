@@ -8,7 +8,7 @@ public interface UserService {
 
     User registerUser(User user);
 
-    User saveUser(User user);
+    User updateUser(User user);
 
     void deleteUser(User user);
 
