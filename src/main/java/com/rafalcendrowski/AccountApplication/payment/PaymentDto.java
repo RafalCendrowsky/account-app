@@ -1,4 +1,4 @@
-package com.rafalcendrowski.AccountApplication.controllers;
+package com.rafalcendrowski.AccountApplication.payment;
 
 import lombok.Data;
 
