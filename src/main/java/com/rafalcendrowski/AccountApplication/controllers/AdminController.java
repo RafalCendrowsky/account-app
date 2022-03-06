@@ -30,9 +30,8 @@ public class AdminController {
     @GetMapping("/user")
     public List<Map<String, Object>> getUsers() {
         List<Map<String, Object>> userList = new ArrayList<>();
-        for (User user: userService.loadAllUsers()) {
-            userList.add(user.getUserMap());
-        }
+        userService.loadAllUsers().forEach(
+                user -> userList.add(user.getUserMap()));
         return userList;
     }
 

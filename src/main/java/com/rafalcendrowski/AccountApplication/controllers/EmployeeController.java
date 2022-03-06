@@ -51,9 +51,8 @@ public class EmployeeController {
     @GetMapping("/payment")
     public List<Map<String, Object>> getPayment(@AuthenticationPrincipal User user) {
         List<Map<String, Object>> payments = new ArrayList<>();
-        for(Payment payment: paymentService.loadByEmployee(user)) {
-            payments.add(getPaymentMap(user, payment));
-        }
+        paymentService.loadByEmployee(user).forEach(
+                payment -> payments.add(getPaymentMap(user, payment)));
         return payments;
     }
 }
