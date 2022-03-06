@@ -85,12 +85,12 @@ public class PaymentsController {
 
     @Transactional
     @PutMapping
-    public Map<String, String> updatePayroll(@Valid @RequestBody PaymentDto paymentDto) {
+    public EntityModel<PaymentDto> updatePayroll(@Valid @RequestBody PaymentDto paymentDto) {
         User employee = userService.loadByUsername(paymentDto.getEmployee());
         Payment payment = paymentService.loadByEmployeeAndPeriod(employee, paymentDto.getPeriod());
         payment.setSalary(paymentDto.getSalary());
         paymentService.savePayment(payment);
-        return Map.of("status", "Updated successfully");
+        return paymentModelAssembler.toModel(payment);
     }
 
     @Transactional
