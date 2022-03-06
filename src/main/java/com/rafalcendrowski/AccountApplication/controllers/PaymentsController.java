@@ -95,6 +95,18 @@ public class PaymentsController {
     }
 
     @Transactional
+    @PutMapping("/{id}")
+    public EntityModel<PaymentDto> updatePayroll(@PathVariable Long id, @RequestBody Long salary) {
+        if (salary < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Salary must be a non-negative number");
+        }
+        Payment payment = paymentService.loadById(id);
+        payment.setSalary(salary);
+        paymentService.savePayment(payment);
+        return paymentModelAssembler.toModel(payment);
+    }
+
+    @Transactional
     @DeleteMapping
     public ResponseEntity<?> deletePayroll(@Valid @RequestBody PaymentDto paymentBody) {
         User employee = userService.loadByUsername(paymentBody.getEmployee());
