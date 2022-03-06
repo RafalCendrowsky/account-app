@@ -13,4 +13,6 @@ public interface UserService {
     List<User> loadAllUsers();
 
     boolean hasUser(String username);
+
+    void grantRole(User user);
 }

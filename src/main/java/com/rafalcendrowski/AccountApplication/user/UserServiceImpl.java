@@ -55,4 +55,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public boolean hasUser(String username) {
         return (userRepository.findByUsername(username.toLowerCase(Locale.ROOT)) != null);
     }
+
+    @Override
+    public void grantRole(User user) {
+        if (userRepository.findAll().size() == 0) {
+            user.addRole(User.Role.ADMINISTRATOR);
+        } else {
+            user.addRole(User.Role.USER);
+        }
+    }
 }
