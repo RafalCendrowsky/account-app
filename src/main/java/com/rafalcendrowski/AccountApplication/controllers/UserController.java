@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -49,7 +50,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{email}")
-    public Map<String, String> deleteUser(@PathVariable String email, @AuthenticationPrincipal User admin) {
+    public ResponseEntity<?> deleteUser(@PathVariable String email, @AuthenticationPrincipal User admin) {
         User user = userService.loadByUsername(email);
         if (user.hasRole(User.Role.ADMINISTRATOR)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't remove ADMINISTRATOR!");
@@ -57,7 +58,7 @@ public class UserController {
             userService.deleteUser(user);
             secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), email,
                     "DELETE_USER", "/api/admin/user"));
-            return Map.of("status", "Deleted successfully", "user", email);
+            return ResponseEntity.noContent().build();
         }
     }
 
