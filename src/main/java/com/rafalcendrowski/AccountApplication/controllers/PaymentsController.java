@@ -55,6 +55,7 @@ public class PaymentsController {
                 .map(paymentModelAssembler::toModel).toList();
         return  CollectionModel.of(payments,
                 linkTo(methodOn(PaymentsController.class).getPaymentsByUser(userId)).withSelfRel(),
+                linkTo(methodOn(UserController.class).getUser(userId)).withRel("user"),
                 linkTo(methodOn(PaymentsController.class).getPayments()).withRel("payments"));
     }
 
