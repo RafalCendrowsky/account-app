@@ -84,7 +84,6 @@ public class PaymentsController {
                 linkTo(methodOn(PaymentsController.class).getPayments()).withRel("payments"));
     }
 
-    @Transactional
     @PutMapping
     public EntityModel<PaymentDto> updatePayroll(@Valid @RequestBody PaymentDto paymentDto) {
         User employee = userService.loadByUsername(paymentDto.getEmployee());
@@ -94,7 +93,6 @@ public class PaymentsController {
         return paymentModelAssembler.toModel(payment);
     }
 
-    @Transactional
     @PutMapping("/{id}")
     public EntityModel<PaymentDto> updatePayroll(@PathVariable Long id, @RequestBody Long salary) {
         if (salary < 0) {
@@ -106,7 +104,6 @@ public class PaymentsController {
         return paymentModelAssembler.toModel(payment);
     }
 
-    @Transactional
     @DeleteMapping
     public ResponseEntity<?> deletePayroll(@Valid @RequestBody PaymentDto paymentBody) {
         User employee = userService.loadByUsername(paymentBody.getEmployee());
