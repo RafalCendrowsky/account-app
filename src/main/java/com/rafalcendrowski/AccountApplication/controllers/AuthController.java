@@ -43,14 +43,14 @@ public class AuthController {
     private final Set<String> breachedPasswords = Set.of("breachedPassword");
 
     @PostMapping("/signup")
-    public UserDto addAccount(@Valid @RequestBody UserRegisterDto userBody, @AuthenticationPrincipal User authUser) {
-        if (userService.hasUser(userBody.getEmail())) {
+    public UserDto addAccount(@Valid @RequestBody UserRegisterDto userRegisterDto, @AuthenticationPrincipal User authUser) {
+        if (userService.hasUser(userRegisterDto.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists");
-        } else if (isBreached(userBody.getPassword())) {
+        } else if (isBreached(userRegisterDto.getPassword())) {
             throw new BreachedPasswordException();
         }
-        User user = new User(userBody.getEmail(), passwordEncoder.encode(userBody.getPassword()),
-                userBody.getName(), userBody.getLastname());
+        User user = new User(userRegisterDto.getEmail(), passwordEncoder.encode(userRegisterDto.getPassword()),
+                userRegisterDto.getName(), userRegisterDto.getLastname());
         userService.registerUser(user);
         String subject = authUser == null ? "Anonymous" : authUser.getName();
         secLogger.info(LoggerConfig.getEventLogMap(subject, user.getUsername(), "CREATE_USER", "api/auth/signup"));
