@@ -19,7 +19,7 @@ import javax.validation.constraints.Pattern;
 import java.util.*;
 
 @RestController
-@RequestMapping("api/admin")
+@RequestMapping("api/users")
 public class UserController {
 
     @Autowired
@@ -28,7 +28,7 @@ public class UserController {
     @Autowired
     Logger secLogger;
 
-    @GetMapping("/user")
+    @GetMapping
     public List<UserDto> getUsers() {
         List<UserDto> userList = new ArrayList<>();
         userService.loadAllUsers().forEach(
@@ -36,13 +36,13 @@ public class UserController {
         return userList;
     }
 
-    @GetMapping("/user/{email}")
+    @GetMapping("/{email}")
     public UserDto getUser(@PathVariable String email) {
         User user = userService.loadByUsername(email);
         return UserDto.of(user);
     }
 
-    @DeleteMapping("/user/{email}")
+    @DeleteMapping("/{email}")
     public Map<String, String> deleteUser(@PathVariable String email, @AuthenticationPrincipal User admin) {
         User user = userService.loadByUsername(email);
         if (user.hasRole(User.Role.ADMINISTRATOR)) {
@@ -55,54 +55,37 @@ public class UserController {
         }
     }
 
-    @PutMapping("/user/role")
-    public UserDto updateRole(@Valid @RequestBody RoleBody roleBody, @AuthenticationPrincipal User admin) {
-        User user = userService.loadByUsername(roleBody.getUser());
-        if (user.hasRole(User.Role.ADMINISTRATOR) != roleBody.getRole().equals(User.Role.ADMINISTRATOR)) {
+    @PutMapping("/{email}/role")
+    public UserDto updateRole(@PathVariable String email, @Valid @RequestBody User.Role role, @AuthenticationPrincipal User admin) {
+        User user = userService.loadByUsername(email);
+        if (user.hasRole(User.Role.ADMINISTRATOR) != role.equals(User.Role.ADMINISTRATOR)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot combine ADMINISTRATOR with other roles");
         } else {
-            if (user.addRole(roleBody.getRole())) {
+            if (user.addRole(role)) {
                 userService.updateUser(user);
-                secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Grant role %s to %s".formatted(roleBody.getRole(), roleBody.getUser()),
+                secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Grant role %s to %s".formatted(role, role),
                         "GRANT_ROLE", "/api/admin/user/role"));
             }
             return UserDto.of(user);
         }
     }
 
-    @DeleteMapping("/user/role")
-    public UserDto deleteRole(@Valid @RequestBody RoleBody roleBody, @AuthenticationPrincipal User admin) {
-        User user = userService.loadByUsername(roleBody.getUser());
-        if (!user.hasRole(roleBody.getRole())) {
+    @DeleteMapping("/{email}/role")
+    public UserDto deleteRole(@PathVariable String email, @Valid @RequestBody User.Role role, @AuthenticationPrincipal User admin) {
+        User user = userService.loadByUsername(email);
+        if (!user.hasRole(role)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User role not found");
         } else {
-            if (roleBody.getRole().equals(User.Role.ADMINISTRATOR)) {
+            if (role.equals(User.Role.ADMINISTRATOR)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot remove ADMINISTRATOR");
             } else if (user.getRoles().size() == 1) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot remove user's only role");
             }
-            user.getRoles().remove(roleBody.getRole());
+            user.getRoles().remove(role);
             userService.updateUser(user);
-            secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Remove role %s from %s".formatted(roleBody.getRole(), roleBody.getUser()),
+            secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Remove role %s from %s".formatted(role, email),
                     "REMOVE_ROLE", "/api/admin/user/role"));
             return UserDto.of(user);
         }
     }
-}
-
-@Data
-@NoArgsConstructor
-class RoleBody {
-    @NotEmpty
-    private String user;
-    private User.Role role;
-}
-
-@Data
-@NoArgsConstructor
-class LockBody {
-    @NotEmpty
-    private String user;
-    @Pattern(regexp = "LOCK|UNLOCK")
-    private String operation;
 }
