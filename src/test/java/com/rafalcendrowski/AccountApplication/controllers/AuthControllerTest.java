@@ -1,6 +1,7 @@
 package com.rafalcendrowski.AccountApplication.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rafalcendrowski.AccountApplication.user.UserRegisterDto;
 import com.rafalcendrowski.AccountApplication.user.UserService;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
@@ -42,11 +43,11 @@ class AuthControllerTest {
     @MockBean
     Logger logger;
 
-    private static UserBody testUser;
+    private static UserRegisterDto testUser;
 
     @BeforeAll
     static void setUpUser() {
-        testUser = new UserBody("test name", "test lastname",
+        testUser = new UserRegisterDto("test name", "test lastname",
                 "test@acme.com", "testvalidpassword");
     }
 
@@ -61,7 +62,7 @@ class AuthControllerTest {
 
     @ParameterizedTest
     @MethodSource(value = "invalidUserBodySource")
-    void testWithInvalidUserBody(UserBody user) throws Exception {
+    void testWithInvalidUserBody(UserRegisterDto user) throws Exception {
         mockMvc.perform(post("/api/auth/signup")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(user)))
@@ -79,7 +80,7 @@ class AuthControllerTest {
 
     @Test
     void testWithBreachedPassword() throws  Exception {
-        UserBody user = new UserBody("name", "lastname",
+        UserRegisterDto user = new UserRegisterDto("name", "lastname",
                 "email@acme.com", "breachedPassword");
         mockMvc.perform(post("/api/auth/signup")
                         .contentType("application/json")
@@ -89,17 +90,17 @@ class AuthControllerTest {
 
     public static Stream<Arguments> invalidUserBodySource() {
         return Stream.of(
-                Arguments.arguments(new UserBody("", "lastname",
+                Arguments.arguments(new UserRegisterDto("", "lastname",
                         "email@acme.com", "validpassword")),
-                Arguments.arguments(new UserBody("name", "",
+                Arguments.arguments(new UserRegisterDto("name", "",
                         "email@acme.com", "validpassword")),
-                Arguments.arguments(new UserBody("name", "lastname",
+                Arguments.arguments(new UserRegisterDto("name", "lastname",
                         "", "validpassword")),
-                Arguments.arguments(new UserBody("name", "lastname",
+                Arguments.arguments(new UserRegisterDto("name", "lastname",
                         "email@acme.com", "")),
-                Arguments.arguments(new UserBody("name", "lastname",
+                Arguments.arguments(new UserRegisterDto("name", "lastname",
                         "email@invalid.com", "validpassword")),
-                Arguments.arguments(new UserBody("name", "lastname",
+                Arguments.arguments(new UserRegisterDto("name", "lastname",
                         "email@acme.com", "tooshort"))
         );
     }

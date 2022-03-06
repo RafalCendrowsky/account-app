@@ -1,10 +1,10 @@
 package com.rafalcendrowski.AccountApplication.controllers;
 
 import com.rafalcendrowski.AccountApplication.payment.Payment;
+import com.rafalcendrowski.AccountApplication.payment.PaymentDto;
 import com.rafalcendrowski.AccountApplication.payment.PaymentService;
 import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.user.UserService;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +12,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
 import java.util.*;
 
 @RestController
@@ -30,8 +26,8 @@ public class AccountController {
 
     @Transactional
     @PostMapping("/payments")
-    public Map<String, String> addPayrolls(@Valid @RequestBody PaymentList<PaymentBody> payments) {
-        for(PaymentBody paymentBody : payments) {
+    public Map<String, String> addPayrolls(@Valid @RequestBody PaymentList<PaymentDto> payments) {
+        for(PaymentDto paymentBody : payments) {
             User employee = userService.loadByUsername(paymentBody.getEmployee());
             if (paymentService.hasPayment(employee, paymentBody.getPeriod())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -48,37 +44,24 @@ public class AccountController {
 
     @Transactional
     @PutMapping("/payments")
-    public Map<String, String> updatePayroll(@Valid @RequestBody PaymentBody paymentBody) {
-        User employee = userService.loadByUsername(paymentBody.getEmployee());
-        Payment payment = paymentService.loadByEmployeeAndPeriod(employee, paymentBody.getPeriod());
-        payment.setSalary(paymentBody.getSalary());
+    public Map<String, String> updatePayroll(@Valid @RequestBody PaymentDto paymentDto) {
+        User employee = userService.loadByUsername(paymentDto.getEmployee());
+        Payment payment = paymentService.loadByEmployeeAndPeriod(employee, paymentDto.getPeriod());
+        payment.setSalary(paymentDto.getSalary());
         paymentService.savePayment(payment);
         return Map.of("status", "Updated successfully");
     }
 
     @Transactional
     @DeleteMapping("/payments")
-    public Map<String, String> deletePayroll(@Valid @RequestBody PaymentBody paymentBody) {
-        User employee = userService.loadByUsername(paymentBody.getEmployee());
-        Payment payment = paymentService.loadByEmployeeAndPeriod(employee, paymentBody.getPeriod());
+    public Map<String, String> deletePayroll(@Valid @RequestBody PaymentDto paymentDto) {
+        User employee = userService.loadByUsername(paymentDto.getEmployee());
+        Payment payment = paymentService.loadByEmployeeAndPeriod(employee, paymentDto.getPeriod());
         employee.removePayment(payment);
         paymentService.deletePayment(payment);
         userService.updateUser(employee);
         return Map.of("status", "Deleted successfully");
     }
-}
-
-@Data
-class PaymentBody {
-    @NotEmpty
-    @Email
-    @Pattern(regexp = ".*@acme\\.com")
-    private String employee;
-    @NotEmpty
-    @Pattern(regexp = "(1[0-2]|0[1-9])-\\d\\d\\d\\d")
-    private String period;
-    @Min(0L)
-    private Long salary;
 }
 
 class PaymentList<E> implements List<E>{
