@@ -22,6 +22,5 @@ public class UserRegisterDto {
     private String email;
     @NotEmpty
     @Size(min = 12)
-    @JsonIgnore
     private String password;
 }
