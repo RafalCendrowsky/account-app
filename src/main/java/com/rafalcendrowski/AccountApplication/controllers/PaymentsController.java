@@ -61,6 +61,13 @@ public class PaymentsController {
                 linkTo(methodOn(PaymentsController.class).getPayments()).withRel("payments"));
     }
 
+    @GetMapping("/find")
+    public EntityModel<PaymentDto> getPaymentByUserAndPeriod(@Valid @RequestBody PaymentDto paymentDto) {
+        User employee = userService.loadByUsername(paymentDto.getEmployee());
+        Payment payment = paymentService.loadByEmployeeAndPeriod(employee, paymentDto.getPeriod());
+        return paymentModelAssembler.toModel(payment);
+    }
+
     @Transactional
     @PostMapping
     public CollectionModel<EntityModel<PaymentDto>> addPayrolls(@Valid @RequestBody PaymentList<PaymentDto> payments) {
