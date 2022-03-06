@@ -6,6 +6,8 @@ public interface UserService {
 
     User loadByUsername(String username);
 
+    User loadById(Long id);
+
     User registerUser(User user);
 
     User updateUser(User user);

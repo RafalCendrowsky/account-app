@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
@@ -33,6 +34,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             throw new CustomNotFoundException("User not found");
         } else {
             return user;
+        }
+    }
+
+    @Override
+    public User loadById(Long id) throws CustomNotFoundException {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
+            throw new CustomNotFoundException("User not found");
+        } else {
+            return optionalUser.get();
         }
     }
 
