@@ -3,6 +3,7 @@ package com.rafalcendrowski.AccountApplication.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rafalcendrowski.AccountApplication.user.UserService;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -41,20 +42,45 @@ class AuthControllerTest {
     @MockBean
     Logger logger;
 
+    private static UserBody testUser;
+
+    @BeforeAll
+    static void setUpUser() {
+        testUser = new UserBody("test name", "test lastname",
+                "test@acme.com", "testvalidpassword");
+    }
+
     @Test
     void testWithValidInputReturnsOK() throws Exception {
         when(encoder.encode(any(String.class))).thenReturn("encoded password");
-        UserBody user = new UserBody("test name", "test lastname",
-                "test@acme.com", "testvalidpassword");
         mockMvc.perform(post("/api/auth/signup")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(user)))
+                        .content(objectMapper.writeValueAsString(testUser)))
                 .andExpect(status().isOk());
     }
 
     @ParameterizedTest
     @MethodSource(value = "invalidUserBodySource")
     void testWithInvalidUserBody(UserBody user) throws Exception {
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testWithUserAlreadyExists() throws Exception {
+        when(userService.hasUser(any(String.class))).thenReturn(true);
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(testUser)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testWithBreachedPassword() throws  Exception {
+        UserBody user = new UserBody("name", "lastname",
+                "email@acme.com", "breachedPassword");
         mockMvc.perform(post("/api/auth/signup")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(user)))
