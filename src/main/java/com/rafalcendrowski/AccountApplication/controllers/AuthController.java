@@ -4,6 +4,7 @@ import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.user.UserRepository;
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import com.rafalcendrowski.AccountApplication.user.UserService;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -90,6 +91,7 @@ class Password {
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 class UserBody {
     @NotEmpty
     private String name;
