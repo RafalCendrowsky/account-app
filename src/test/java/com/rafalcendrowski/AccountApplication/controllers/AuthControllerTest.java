@@ -3,8 +3,10 @@ package com.rafalcendrowski.AccountApplication.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rafalcendrowski.AccountApplication.user.UserService;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -13,7 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import java.util.stream.Stream;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -47,5 +50,31 @@ class AuthControllerTest {
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isOk());
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "invalidUserBodySource")
+    void testWithInvalidUserBody(UserBody user) throws Exception {
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isBadRequest());
+    }
+
+    public static Stream<Arguments> invalidUserBodySource() {
+        return Stream.of(
+                Arguments.arguments(new UserBody("", "lastname",
+                        "email@acme.com", "validpassword")),
+                Arguments.arguments(new UserBody("name", "",
+                        "email@acme.com", "validpassword")),
+                Arguments.arguments(new UserBody("name", "lastname",
+                        "", "validpassword")),
+                Arguments.arguments(new UserBody("name", "lastname",
+                        "email@acme.com", "")),
+                Arguments.arguments(new UserBody("name", "lastname",
+                        "email@invalid.com", "validpassword")),
+                Arguments.arguments(new UserBody("name", "lastname",
+                        "email@acme.com", "tooshort"))
+        );
     }
 }
