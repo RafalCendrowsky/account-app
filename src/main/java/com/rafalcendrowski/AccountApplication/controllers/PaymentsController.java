@@ -48,6 +48,16 @@ public class PaymentsController {
         return paymentModelAssembler.toModel(payment);
     }
 
+    @GetMapping("/user/{userId}")
+    public CollectionModel<EntityModel<Payment>> getPaymentsByUser(@PathVariable Long id) {
+        User employee = userService.loadById(id);
+        List<EntityModel<Payment>> payments = paymentService.loadByEmployee(employee).stream()
+                .map(paymentModelAssembler::toModel).toList();
+        return  CollectionModel.of(payments,
+                linkTo(methodOn(PaymentsController.class).getPaymentsByUser(id)).withSelfRel(),
+                linkTo(methodOn(PaymentsController.class).getPayments()).withRel("payments"));
+    }
+
     @Transactional
     @PostMapping
     public Map<String, String> addPayrolls(@Valid @RequestBody PaymentList<PaymentDto> payments) {
