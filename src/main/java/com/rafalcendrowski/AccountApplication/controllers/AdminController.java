@@ -36,6 +36,12 @@ public class AdminController {
         return userList;
     }
 
+    @GetMapping("/user/{email}")
+    public UserDto getUser(@PathVariable String email) {
+        User user = userService.loadByUsername(email);
+        return UserDto.of(user);
+    }
+
     @DeleteMapping("/user/{email}")
     public Map<String, String> deleteUser(@PathVariable String email, @AuthenticationPrincipal User admin) {
         User user = userService.loadByUsername(email);
