@@ -11,6 +11,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -39,7 +40,10 @@ public class PaymentsController {
         List<EntityModel<PaymentDto>> payments = paymentService.loadAllPayments().stream()
                 .map(paymentModelAssembler::toModel).toList();
         return CollectionModel.of(payments,
-                linkTo(methodOn(PaymentsController.class).getPayments()).withSelfRel());
+                linkTo(methodOn(PaymentsController.class).getPayments()).withSelfRel(),
+                linkTo(methodOn(PaymentsController.class).getPaymentByUserAndPeriod(null)).withRel("search"),
+                linkTo(methodOn(PaymentsController.class).getPaymentsByUsername(null)).withRel("search"),
+                linkTo(methodOn(PaymentsController.class).getPaymentsByUserId(null)).withRel("search"));
     }
 
     @GetMapping("/{id}")
@@ -64,6 +68,16 @@ public class PaymentsController {
         User employee = userService.loadByUsername(paymentDto.getEmployee());
         Payment payment = paymentService.loadByEmployeeAndPeriod(employee, paymentDto.getPeriod());
         return paymentModelAssembler.toModel(payment);
+    }
+
+    @GetMapping("/find/{username}")
+    public CollectionModel<EntityModel<PaymentDto>> getPaymentsByUsername(@PathVariable String username) {
+        User employee = userService.loadByUsername(username);
+        List<EntityModel<PaymentDto>> payments = paymentService.loadByEmployee(employee).stream()
+                .map(paymentModelAssembler::toModel).toList();
+        return CollectionModel.of(payments,
+                linkTo(methodOn(PaymentsController.class).getPaymentsByUsername(username)).withSelfRel(),
+                linkTo(methodOn(PaymentsController.class).getPayments()).withRel("payments"));
     }
 
     @Transactional
