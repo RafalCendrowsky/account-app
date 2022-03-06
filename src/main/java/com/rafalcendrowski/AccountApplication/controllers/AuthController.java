@@ -52,10 +52,7 @@ public class AuthController {
         }
         User user = new User(userBody.getEmail(), passwordEncoder.encode(userBody.getPassword()),
                 userBody.getName(), userBody.getLastname());
-        if (userService.loadAllUsers().size() == 0) {
-            user.setRoles(Set.of(User.Role.ADMINISTRATOR));
-        }
-        userService.saveUser(user);
+        userService.registerUser(user);
         String subject = authUser == null ? "Anonymous" : authUser.getName();
         secLogger.info(LoggerConfig.getEventLogMap(subject, user.getUsername(), "CREATE_USER", "api/auth/signup"));
         return user.getUserMap();
