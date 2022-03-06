@@ -113,6 +113,16 @@ public class PaymentsController {
         userService.updateUser(employee);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePayroll(@PathVariable Long id) {
+        Payment payment = paymentService.loadById(id);
+        User employee = payment.getEmployee();
+        employee.removePayment(payment);
+        paymentService.deletePayment(payment);
+        userService.updateUser(employee);
+        return ResponseEntity.noContent().build();
+    }
 }
 
 class PaymentList<E> implements List<E>{
