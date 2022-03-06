@@ -1,5 +1,6 @@
 package com.rafalcendrowski.AccountApplication.controllers;
 
+import com.rafalcendrowski.AccountApplication.models.UserModelAssembler;
 import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import com.rafalcendrowski.AccountApplication.user.UserDto;
@@ -8,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/users")
@@ -28,18 +32,20 @@ public class UserController {
     @Autowired
     Logger secLogger;
 
+    @Autowired
+    UserModelAssembler userModelAssembler;
+
     @GetMapping
-    public List<UserDto> getUsers() {
-        List<UserDto> userList = new ArrayList<>();
-        userService.loadAllUsers().forEach(
-                user -> userList.add(UserDto.of(user)));
-        return userList;
+    public CollectionModel<EntityModel<UserDto>> getUsers() {
+        List<EntityModel<UserDto>> userList = userService.loadAllUsers().stream()
+                .map(userModelAssembler::toModel).collect(Collectors.toList());
+        return CollectionModel.of(userList);
     }
 
     @GetMapping("/{email}")
-    public UserDto getUser(@PathVariable String email) {
+    public EntityModel<UserDto> getUser(@PathVariable String email) {
         User user = userService.loadByUsername(email);
-        return UserDto.of(user);
+        return userModelAssembler.toModel(user);
     }
 
     @DeleteMapping("/{email}")
