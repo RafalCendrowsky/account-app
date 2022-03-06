@@ -1,5 +1,6 @@
 package com.rafalcendrowski.AccountApplication.payment;
 
+import com.rafalcendrowski.AccountApplication.exceptions.CustomNotFoundException;
 import com.rafalcendrowski.AccountApplication.user.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,13 +42,13 @@ class PaymentServiceTest {
         User user = new User();
         try {
             paymentService.loadByEmployeeAndPeriod(user, "test");
-        } catch (IllegalArgumentException ignored) {}
+        } catch (CustomNotFoundException ignored) {}
         verify(paymentRepository).findByEmployeeAndPeriod(user, "test");
     }
 
     @Test
     void loadByEmployeeAndPeriod_invalid_args() {
-        assertThrows(IllegalArgumentException.class, () -> paymentService.loadByEmployeeAndPeriod(null, "test"));
+        assertThrows(CustomNotFoundException.class, () -> paymentService.loadByEmployeeAndPeriod(null, "test"));
     }
 
     @Test
