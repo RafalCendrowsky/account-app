@@ -36,7 +36,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<Payment> loadByEmployee(User employee) {
-        return Arrays.stream(paymentRepository.findByEmployee(employee)).toList();
+        return paymentRepository.findByEmployee(employee);
     }
 
     @Override

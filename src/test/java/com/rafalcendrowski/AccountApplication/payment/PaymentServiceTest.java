@@ -54,7 +54,7 @@ class PaymentServiceTest {
     void loadByEmployee() {
         Payment payment = new Payment();
         User user = new User();
-        when(paymentRepository.findByEmployee(user)).thenReturn(new Payment[]{payment});
+        when(paymentRepository.findByEmployee(user)).thenReturn(List.of(payment));
         assertEquals(paymentService.loadByEmployee(user), List.of(payment));
     }
 
