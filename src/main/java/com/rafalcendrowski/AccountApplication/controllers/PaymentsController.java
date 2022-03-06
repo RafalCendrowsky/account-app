@@ -1,11 +1,14 @@
 package com.rafalcendrowski.AccountApplication.controllers;
 
+import com.rafalcendrowski.AccountApplication.models.PaymentModelAssembler;
 import com.rafalcendrowski.AccountApplication.payment.Payment;
 import com.rafalcendrowski.AccountApplication.payment.PaymentDto;
 import com.rafalcendrowski.AccountApplication.payment.PaymentService;
 import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,6 +16,10 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/payments")
@@ -23,6 +30,23 @@ public class PaymentsController {
 
     @Autowired
     PaymentService paymentService;
+
+    @Autowired
+    PaymentModelAssembler paymentModelAssembler;
+
+    @GetMapping
+    public CollectionModel<EntityModel<Payment>> getPayments() {
+        List<EntityModel<Payment>> payments = paymentService.loadAllPayments().stream()
+                .map(paymentModelAssembler::toModel).toList();
+        return CollectionModel.of(payments,
+                linkTo(methodOn(PaymentsController.class).getPayments()).withSelfRel());
+    }
+
+    @GetMapping("/{id}")
+    public EntityModel<Payment> getPayment(@PathVariable Long id) {
+        Payment payment = paymentService.loadById(id);
+        return paymentModelAssembler.toModel(payment);
+    }
 
     @Transactional
     @PostMapping
