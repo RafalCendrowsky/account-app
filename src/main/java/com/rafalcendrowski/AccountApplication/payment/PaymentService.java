@@ -10,7 +10,7 @@ public interface PaymentService {
 
     void deletePayment(Payment payment);
 
-    Payment loadByEmployeeAndPeriod(User user, String period) throws IllegalArgumentException;
+    Payment loadByEmployeeAndPeriod(User user, String period);
 
     List<Payment> loadByEmployee(User employee);
 

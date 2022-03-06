@@ -25,7 +25,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment loadByEmployeeAndPeriod(User user, String period) throws IllegalArgumentException{
+    public Payment loadByEmployeeAndPeriod(User user, String period) throws CustomNotFoundException {
         Payment payment = paymentRepository.findByEmployeeAndPeriod(user, period);
         if (payment == null) {
             throw new CustomNotFoundException("Payment does not exist");

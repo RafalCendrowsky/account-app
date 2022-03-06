@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface UserService {
 
-    User loadByUsername(String username) throws IllegalArgumentException;
+    User loadByUsername(String username);
 
     User saveUser(User user);
 

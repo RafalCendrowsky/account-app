@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public User loadByUsername(String username) throws IllegalArgumentException {
+    public User loadByUsername(String username) throws CustomNotFoundException {
         User user = userRepository.findByUsername(username.toLowerCase(Locale.ROOT));
         if (user == null) {
             throw new CustomNotFoundException("User not found");
