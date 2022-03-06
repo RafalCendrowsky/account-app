@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @PutMapping("/{email}/role")
-    public UserDto updateRole(@PathVariable String email, @Valid @RequestBody User.Role role, @AuthenticationPrincipal User admin) {
+    public EntityModel<UserDto> updateRole(@PathVariable String email, @Valid @RequestBody User.Role role, @AuthenticationPrincipal User admin) {
         User user = userService.loadByUsername(email);
         if (user.hasRole(User.Role.ADMINISTRATOR) != role.equals(User.Role.ADMINISTRATOR)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot combine ADMINISTRATOR with other roles");
@@ -73,12 +73,12 @@ public class UserController {
                 secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Grant role %s to %s".formatted(role, role),
                         "GRANT_ROLE", "/api/admin/user/role"));
             }
-            return UserDto.of(user);
+            return userModelAssembler.toModel(user);
         }
     }
 
     @DeleteMapping("/{email}/role")
-    public UserDto deleteRole(@PathVariable String email, @Valid @RequestBody User.Role role, @AuthenticationPrincipal User admin) {
+    public EntityModel<UserDto> deleteRole(@PathVariable String email, @Valid @RequestBody User.Role role, @AuthenticationPrincipal User admin) {
         User user = userService.loadByUsername(email);
         if (!user.hasRole(role)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User role not found");
@@ -92,7 +92,7 @@ public class UserController {
             userService.updateUser(user);
             secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Remove role %s from %s".formatted(role, email),
                     "REMOVE_ROLE", "/api/admin/user/role"));
-            return UserDto.of(user);
+            return userModelAssembler.toModel(user);
         }
     }
 }
