@@ -11,6 +11,7 @@ import javax.validation.constraints.Pattern;
 @Data
 @Relation(collectionRelation = "payments")
 public class PaymentDto {
+    Long id;
     @NotEmpty
     @Email
     @Pattern(regexp = ".*@acme\\.com")
@@ -20,4 +21,15 @@ public class PaymentDto {
     private String period;
     @Min(0L)
     private Long salary;
+
+    public PaymentDto(Payment payment) {
+        this.id = payment.getId();
+        this.employee = payment.getEmployee().getUsername();
+        this.period = payment.getPeriod();
+        this.salary = payment.getSalary();
+    }
+
+    public static PaymentDto of(Payment payment) {
+        return new PaymentDto(payment);
+    }
 }
