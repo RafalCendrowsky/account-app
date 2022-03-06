@@ -53,6 +53,13 @@ class UserServiceTest {
     }
 
     @Test
+    void updateInvalidUser() {
+        User user = new User();
+        user.setUsername("test");
+        assertThrows(IllegalArgumentException.class, () -> userService.updateUser(user));
+    }
+
+    @Test
     void deleteUser() {
         User user = new User();
         userService.deleteUser(user);
