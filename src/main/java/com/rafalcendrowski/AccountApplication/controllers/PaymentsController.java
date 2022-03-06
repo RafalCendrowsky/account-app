@@ -15,8 +15,8 @@ import javax.validation.Valid;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api/acct")
-public class AccountController {
+@RequestMapping("/api/payments")
+public class PaymentsController {
 
     @Autowired
     UserService userService;
@@ -25,7 +25,7 @@ public class AccountController {
     PaymentService paymentService;
 
     @Transactional
-    @PostMapping("/payments")
+    @PostMapping
     public Map<String, String> addPayrolls(@Valid @RequestBody PaymentList<PaymentDto> payments) {
         for(PaymentDto paymentBody : payments) {
             User employee = userService.loadByUsername(paymentBody.getEmployee());
@@ -43,7 +43,7 @@ public class AccountController {
     }
 
     @Transactional
-    @PutMapping("/payments")
+    @PutMapping
     public Map<String, String> updatePayroll(@Valid @RequestBody PaymentDto paymentDto) {
         User employee = userService.loadByUsername(paymentDto.getEmployee());
         Payment payment = paymentService.loadByEmployeeAndPeriod(employee, paymentDto.getPeriod());
@@ -53,10 +53,10 @@ public class AccountController {
     }
 
     @Transactional
-    @DeleteMapping("/payments")
-    public Map<String, String> deletePayroll(@Valid @RequestBody PaymentDto paymentDto) {
-        User employee = userService.loadByUsername(paymentDto.getEmployee());
-        Payment payment = paymentService.loadByEmployeeAndPeriod(employee, paymentDto.getPeriod());
+    @DeleteMapping
+    public Map<String, String> deletePayroll(@Valid @RequestBody PaymentDto paymentBody) {
+        User employee = userService.loadByUsername(paymentBody.getEmployee());
+        Payment payment = paymentService.loadByEmployeeAndPeriod(employee, paymentBody.getPeriod());
         employee.removePayment(payment);
         paymentService.deletePayment(payment);
         userService.updateUser(employee);
