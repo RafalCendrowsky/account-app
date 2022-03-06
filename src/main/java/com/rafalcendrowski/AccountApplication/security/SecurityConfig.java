@@ -90,9 +90,6 @@ class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Autowired
     Logger secLogger;
 
-    @Autowired
-    UserRepository userRepository;
-
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         String subject = request.getUserPrincipal() == null ? "Anonymous" : request.getUserPrincipal().getName();
