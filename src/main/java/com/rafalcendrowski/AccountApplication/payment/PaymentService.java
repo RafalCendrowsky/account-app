@@ -10,6 +10,8 @@ public interface PaymentService {
 
     void deletePayment(Payment payment);
 
+    Payment loadById(Long id);
+
     Payment loadByEmployeeAndPeriod(User user, String period);
 
     List<Payment> loadByEmployee(User employee);
