@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.swing.text.html.parser.Entity;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.*;
@@ -61,20 +62,25 @@ public class PaymentsController {
 
     @Transactional
     @PostMapping
-    public Map<String, String> addPayrolls(@Valid @RequestBody PaymentList<PaymentDto> payments) {
-        for(PaymentDto paymentBody : payments) {
-            User employee = userService.loadByUsername(paymentBody.getEmployee());
-            if (paymentService.hasPayment(employee, paymentBody.getPeriod())) {
+    public CollectionModel<EntityModel<PaymentDto>> addPayrolls(@Valid @RequestBody PaymentList<PaymentDto> payments) {
+        List<Payment> paymentList = new ArrayList<>();
+        for(PaymentDto paymentDto : payments) {
+            User employee = userService.loadByUsername(paymentDto.getEmployee());
+            if (paymentService.hasPayment(employee, paymentDto.getPeriod())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Payment for %s in %s already exists".formatted(paymentBody.getEmployee(), paymentBody.getPeriod()));
+                        "Payment for %s in %s already exists".formatted(paymentDto.getEmployee(), paymentDto.getPeriod()));
             } else {
-                Payment payment = new Payment(employee, paymentBody.getPeriod(), paymentBody.getSalary());
+                Payment payment = new Payment(employee, paymentDto.getPeriod(), paymentDto.getSalary());
+                paymentList.add(payment);
                 employee.addPayment(payment);
                 paymentService.savePayment(payment);
                 userService.updateUser(employee);
             }
         }
-        return Map.of("status", "Added successfully");
+        List<EntityModel<PaymentDto>> entityList = paymentList.stream()
+                .map(paymentModelAssembler::toModel).toList();
+        return CollectionModel.of(entityList,
+                linkTo(methodOn(PaymentsController.class).getPayments()).withRel("payments"));
     }
 
     @Transactional
