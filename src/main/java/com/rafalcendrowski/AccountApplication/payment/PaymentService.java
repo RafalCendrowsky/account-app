@@ -14,5 +14,7 @@ public interface PaymentService {
 
     List<Payment> loadByEmployee(User employee);
 
+    List<Payment> loadAllPayments();
+
     boolean hasPayment(User employee, String period);
 }

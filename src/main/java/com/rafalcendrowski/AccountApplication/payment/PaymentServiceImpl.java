@@ -40,6 +40,11 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    public List<Payment> loadAllPayments() {
+        return paymentRepository.findAll();
+    }
+
+    @Override
     public boolean hasPayment(User employee, String period) {
         Payment payment = paymentRepository.findByEmployeeAndPeriod(employee, period);
         return (payment != null);
