@@ -43,43 +43,43 @@ public class UserController {
         return CollectionModel.of(userList);
     }
 
-    @GetMapping("/{email}")
-    public EntityModel<UserDto> getUser(@PathVariable String email) {
-        User user = userService.loadByUsername(email);
+    @GetMapping("/{id}")
+    public EntityModel<UserDto> getUser(@PathVariable Long id) {
+        User user = userService.loadById(id);
         return userModelAssembler.toModel(user);
     }
 
-    @DeleteMapping("/{email}")
-    public ResponseEntity<?> deleteUser(@PathVariable String email, @AuthenticationPrincipal User admin) {
-        User user = userService.loadByUsername(email);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id, @AuthenticationPrincipal User admin) {
+        User user = userService.loadById(id);
         if (user.hasRole(User.Role.ADMINISTRATOR)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't remove ADMINISTRATOR!");
         } else {
             userService.deleteUser(user);
-            secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), email,
+            secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), user.getUsername(),
                     "DELETE_USER", "/api/admin/user"));
             return ResponseEntity.noContent().build();
         }
     }
 
-    @PutMapping("/{email}/role")
-    public EntityModel<UserDto> updateRole(@PathVariable String email, @Valid @RequestBody User.Role role, @AuthenticationPrincipal User admin) {
-        User user = userService.loadByUsername(email);
+    @PutMapping("/{id}/role")
+    public EntityModel<UserDto> updateRole(@PathVariable Long id, @Valid @RequestBody User.Role role, @AuthenticationPrincipal User admin) {
+        User user = userService.loadById(id);
         if (user.hasRole(User.Role.ADMINISTRATOR) != role.equals(User.Role.ADMINISTRATOR)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot combine ADMINISTRATOR with other roles");
         } else {
             if (user.addRole(role)) {
                 userService.updateUser(user);
-                secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Grant role %s to %s".formatted(role, role),
+                secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Grant role %s to %s".formatted(role, user.getUsername()),
                         "GRANT_ROLE", "/api/admin/user/role"));
             }
             return userModelAssembler.toModel(user);
         }
     }
 
-    @DeleteMapping("/{email}/role")
-    public EntityModel<UserDto> deleteRole(@PathVariable String email, @Valid @RequestBody User.Role role, @AuthenticationPrincipal User admin) {
-        User user = userService.loadByUsername(email);
+    @DeleteMapping("/{id}/role")
+    public EntityModel<UserDto> deleteRole(@PathVariable Long id, @Valid @RequestBody User.Role role, @AuthenticationPrincipal User admin) {
+        User user = userService.loadById(id);
         if (!user.hasRole(role)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User role not found");
         } else {
@@ -90,7 +90,7 @@ public class UserController {
             }
             user.getRoles().remove(role);
             userService.updateUser(user);
-            secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Remove role %s from %s".formatted(role, email),
+            secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Remove role %s from %s".formatted(role, user.getUsername()),
                     "REMOVE_ROLE", "/api/admin/user/role"));
             return userModelAssembler.toModel(user);
         }
