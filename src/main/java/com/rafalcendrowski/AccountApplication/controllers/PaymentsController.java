@@ -14,11 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.swing.text.html.parser.Entity;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -51,12 +49,12 @@ public class PaymentsController {
     }
 
     @GetMapping("/user/{userId}")
-    public CollectionModel<EntityModel<PaymentDto>> getPaymentsByUser(@PathVariable Long userId) {
+    public CollectionModel<EntityModel<PaymentDto>> getPaymentsByUserId(@PathVariable Long userId) {
         User employee = userService.loadById(userId);
         List<EntityModel<PaymentDto>> payments = paymentService.loadByEmployee(employee).stream()
                 .map(paymentModelAssembler::toModel).toList();
         return  CollectionModel.of(payments,
-                linkTo(methodOn(PaymentsController.class).getPaymentsByUser(userId)).withSelfRel(),
+                linkTo(methodOn(PaymentsController.class).getPaymentsByUserId(userId)).withSelfRel(),
                 linkTo(methodOn(UserController.class).getUser(userId)).withRel("user"),
                 linkTo(methodOn(PaymentsController.class).getPayments()).withRel("payments"));
     }
