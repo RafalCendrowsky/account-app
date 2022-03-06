@@ -52,6 +52,7 @@ public class User implements UserDetails {
     public Map<String, Object> getUserMap() {
         List<String> rolesList = getRolesAsStrings();
         rolesList.sort(String::compareTo);
+        String id = (this.id == null) ? "null" : String.valueOf(this.id);
         return Map.of("lastname", lastname, "name", name,
                 "id", id, "email", username, "roles", rolesList);
     }
