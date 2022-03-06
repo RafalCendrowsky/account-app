@@ -35,23 +35,23 @@ public class PaymentsController {
     PaymentModelAssembler paymentModelAssembler;
 
     @GetMapping
-    public CollectionModel<EntityModel<Payment>> getPayments() {
-        List<EntityModel<Payment>> payments = paymentService.loadAllPayments().stream()
+    public CollectionModel<EntityModel<PaymentDto>> getPayments() {
+        List<EntityModel<PaymentDto>> payments = paymentService.loadAllPayments().stream()
                 .map(paymentModelAssembler::toModel).toList();
         return CollectionModel.of(payments,
                 linkTo(methodOn(PaymentsController.class).getPayments()).withSelfRel());
     }
 
     @GetMapping("/{id}")
-    public EntityModel<Payment> getPayment(@PathVariable Long id) {
+    public EntityModel<PaymentDto> getPayment(@PathVariable Long id) {
         Payment payment = paymentService.loadById(id);
         return paymentModelAssembler.toModel(payment);
     }
 
     @GetMapping("/user/{userId}")
-    public CollectionModel<EntityModel<Payment>> getPaymentsByUser(@PathVariable Long id) {
+    public CollectionModel<EntityModel<PaymentDto>> getPaymentsByUser(@PathVariable Long id) {
         User employee = userService.loadById(id);
-        List<EntityModel<Payment>> payments = paymentService.loadByEmployee(employee).stream()
+        List<EntityModel<PaymentDto>> payments = paymentService.loadByEmployee(employee).stream()
                 .map(paymentModelAssembler::toModel).toList();
         return  CollectionModel.of(payments,
                 linkTo(methodOn(PaymentsController.class).getPaymentsByUser(id)).withSelfRel(),
