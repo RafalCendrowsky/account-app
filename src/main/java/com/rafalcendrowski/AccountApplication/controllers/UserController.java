@@ -23,6 +23,9 @@ import javax.validation.constraints.Pattern;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping("api/users")
 public class UserController {
@@ -40,7 +43,8 @@ public class UserController {
     public CollectionModel<EntityModel<UserDto>> getUsers() {
         List<EntityModel<UserDto>> userList = userService.loadAllUsers().stream()
                 .map(userModelAssembler::toModel).collect(Collectors.toList());
-        return CollectionModel.of(userList);
+        return CollectionModel.of(userList,
+                linkTo(methodOn(UserController.class).getUsers()).withSelfRel());
     }
 
     @GetMapping("/{id}")
