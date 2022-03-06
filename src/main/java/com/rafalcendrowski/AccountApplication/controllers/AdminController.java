@@ -2,6 +2,7 @@ package com.rafalcendrowski.AccountApplication.controllers;
 
 import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
+import com.rafalcendrowski.AccountApplication.user.UserDto;
 import com.rafalcendrowski.AccountApplication.user.UserService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,10 +29,10 @@ public class AdminController {
     Logger secLogger;
 
     @GetMapping("/user")
-    public List<Map<String, Object>> getUsers() {
-        List<Map<String, Object>> userList = new ArrayList<>();
+    public List<UserDto> getUsers() {
+        List<UserDto> userList = new ArrayList<>();
         userService.loadAllUsers().forEach(
-                user -> userList.add(user.getUserMap()));
+                user -> userList.add(UserDto.of(user)));
         return userList;
     }
 
@@ -49,7 +50,7 @@ public class AdminController {
     }
 
     @PutMapping("/user/role")
-    public Map<String, Object> updateRole(@Valid @RequestBody RoleBody roleBody, @AuthenticationPrincipal User admin) {
+    public UserDto updateRole(@Valid @RequestBody RoleBody roleBody, @AuthenticationPrincipal User admin) {
         User user = userService.loadByUsername(roleBody.getUser());
         if (user.hasRole(User.Role.ADMINISTRATOR) != roleBody.getRole().equals(User.Role.ADMINISTRATOR)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot combine ADMINISTRATOR with other roles");
@@ -59,12 +60,12 @@ public class AdminController {
                 secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Grant role %s to %s".formatted(roleBody.getRole(), roleBody.getUser()),
                         "GRANT_ROLE", "/api/admin/user/role"));
             }
-            return user.getUserMap();
+            return UserDto.of(user);
         }
     }
 
     @DeleteMapping("/user/role")
-    public Map<String, Object> deleteRole(@Valid @RequestBody RoleBody roleBody, @AuthenticationPrincipal User admin) {
+    public UserDto deleteRole(@Valid @RequestBody RoleBody roleBody, @AuthenticationPrincipal User admin) {
         User user = userService.loadByUsername(roleBody.getUser());
         if (!user.hasRole(roleBody.getRole())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User role not found");
@@ -78,7 +79,7 @@ public class AdminController {
             userService.updateUser(user);
             secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Remove role %s from %s".formatted(roleBody.getRole(), roleBody.getUser()),
                     "REMOVE_ROLE", "/api/admin/user/role"));
-            return user.getUserMap();
+            return UserDto.of(user);
         }
     }
 }

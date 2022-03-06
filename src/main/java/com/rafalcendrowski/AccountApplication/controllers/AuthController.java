@@ -2,10 +2,10 @@ package com.rafalcendrowski.AccountApplication.controllers;
 
 import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
+import com.rafalcendrowski.AccountApplication.user.UserDto;
+import com.rafalcendrowski.AccountApplication.user.UserRegisterDto;
 import com.rafalcendrowski.AccountApplication.user.UserService;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class AuthController {
     private final Set<String> breachedPasswords = Set.of("breachedPassword");
 
     @PostMapping("/signup")
-    public Map<String, Object> addAccount(@Valid @RequestBody UserBody userBody, @AuthenticationPrincipal User authUser) {
+    public UserDto addAccount(@Valid @RequestBody UserRegisterDto userBody, @AuthenticationPrincipal User authUser) {
         if (userService.hasUser(userBody.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists");
         } else if (isBreached(userBody.getPassword())) {
@@ -54,7 +54,7 @@ public class AuthController {
         userService.registerUser(user);
         String subject = authUser == null ? "Anonymous" : authUser.getName();
         secLogger.info(LoggerConfig.getEventLogMap(subject, user.getUsername(), "CREATE_USER", "api/auth/signup"));
-        return user.getUserMap();
+        return UserDto.of(user);
     }
 
 
@@ -83,21 +83,4 @@ class Password {
     @NotEmpty
     @Size(min=12)
     String password;
-}
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-class UserBody {
-    @NotEmpty
-    private String name;
-    @NotEmpty
-    private String lastname;
-    @NotNull
-    @Email
-    @Pattern(regexp = ".*@acme\\.com")
-    private String email;
-    @NotEmpty
-    @Size(min=12)
-    private String password;
 }
