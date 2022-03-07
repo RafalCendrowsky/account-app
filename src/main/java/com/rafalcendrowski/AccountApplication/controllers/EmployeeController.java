@@ -1,10 +1,12 @@
 package com.rafalcendrowski.AccountApplication.controllers;
 
+import com.rafalcendrowski.AccountApplication.models.EmployeeModelAssembler;
 import com.rafalcendrowski.AccountApplication.models.EmployeePaymentModelAssembler;
 import com.rafalcendrowski.AccountApplication.payment.Payment;
 import com.rafalcendrowski.AccountApplication.payment.PaymentDto;
 import com.rafalcendrowski.AccountApplication.payment.PaymentService;
 import com.rafalcendrowski.AccountApplication.user.User;
+import com.rafalcendrowski.AccountApplication.user.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -32,6 +34,13 @@ public class EmployeeController {
 
     @Autowired
     EmployeePaymentModelAssembler employeePaymentModelAssembler;
+
+    @Autowired
+    EmployeeModelAssembler employeeModelAssembler;
+    @GetMapping
+    public EntityModel<UserDto> getEmployee(@AuthenticationPrincipal User user) {
+        return employeeModelAssembler.toModel(user);
+    }
 
     @GetMapping(value = "/payment", params = {"period"})
     public EntityModel<PaymentDto> getPayment(@RequestParam String period,
