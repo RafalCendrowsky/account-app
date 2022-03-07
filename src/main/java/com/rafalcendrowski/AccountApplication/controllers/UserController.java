@@ -99,7 +99,7 @@ public class UserController {
             } else if (user.getRoles().size() == 1) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot remove user's only role");
             }
-            user.getRoles().remove(role);
+            user.removeRole(role);
             userService.updateUser(user);
             secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Remove role %s from %s".formatted(role, user.getUsername()),
                     "REMOVE_ROLE", "/api/admin/user/role"));
