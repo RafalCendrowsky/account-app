@@ -1,5 +1,6 @@
 package com.rafalcendrowski.AccountApplication.controllers;
 
+import com.rafalcendrowski.AccountApplication.models.UserModelAssembler;
 import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import com.rafalcendrowski.AccountApplication.user.UserDto;
@@ -9,6 +10,9 @@ import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import java.awt.image.ReplicateScaleFilter;
 import java.util.*;
 
 
@@ -40,10 +45,13 @@ public class AuthController {
     @Autowired
     private Logger secLogger;
 
+    @Autowired
+    private UserModelAssembler userModelAssembler;
+
     private final Set<String> breachedPasswords = Set.of("breachedPassword");
 
     @PostMapping("/signup")
-    public UserDto addAccount(@Valid @RequestBody UserRegisterDto userRegisterDto, @AuthenticationPrincipal User authUser) {
+    public EntityModel<UserDto> addAccount(@Valid @RequestBody UserRegisterDto userRegisterDto, @AuthenticationPrincipal User authUser) {
         if (userService.hasUser(userRegisterDto.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists");
         } else if (isBreached(userRegisterDto.getPassword())) {
@@ -54,12 +62,12 @@ public class AuthController {
         userService.registerUser(user);
         String subject = authUser == null ? "Anonymous" : authUser.getName();
         secLogger.info(LoggerConfig.getEventLogMap(subject, user.getUsername(), "CREATE_USER", "api/auth/signup"));
-        return UserDto.of(user);
+        return userModelAssembler.toModel(user);
     }
 
 
     @PostMapping("/changepass")
-    public Map<String, String> changePassword(@RequestBody @Valid Password newPassword, @AuthenticationPrincipal User user) {
+    public EntityModel<UserDto> changePassword(@RequestBody @Valid Password newPassword, @AuthenticationPrincipal User user) {
         if(isBreached(newPassword.getPassword())) {
             throw new BreachedPasswordException();
         } else if(passwordEncoder.matches(newPassword.getPassword(), user.getPassword())) {
@@ -68,7 +76,7 @@ public class AuthController {
             user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
             userService.updateUser(user);
             secLogger.info(LoggerConfig.getEventLogMap(user.getName(), user.getUsername(), "CHANGE_PASSWORD", "api/auth/changepass"));
-            return Map.of("email", user.getUsername(), "status", "Password has been updated successfully");
+            return userModelAssembler.toModel(user);
         }
     }
 
