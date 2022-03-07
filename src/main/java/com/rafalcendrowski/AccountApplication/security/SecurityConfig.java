@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.POST, "/api/auth/changepass").authenticated()
                 .mvcMatchers("/api/payments/*").hasRole("ACCOUNTANT")
                 .mvcMatchers("/api/payments/user/*").hasRole("ACCOUNTANT")
-                .mvcMatchers(HttpMethod.GET, "/api/empl/payment").hasAnyRole("USER", "ACCOUNTANT")
+                .mvcMatchers(HttpMethod.GET, "/api/empl/**").hasAnyRole("USER", "ACCOUNTANT")
                 .mvcMatchers(HttpMethod.GET, "/api/security/events").hasRole("AUDITOR")
                 .anyRequest().hasRole("ADMINISTRATOR")
                 .and()
