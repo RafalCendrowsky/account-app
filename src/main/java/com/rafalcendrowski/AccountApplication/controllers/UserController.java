@@ -44,12 +44,19 @@ public class UserController {
         List<EntityModel<UserDto>> userList = userService.loadAllUsers().stream()
                 .map(userModelAssembler::toModel).toList();
         return CollectionModel.of(userList,
-                linkTo(methodOn(UserController.class).getUsers()).withSelfRel());
+                linkTo(methodOn(UserController.class).getUsers()).withSelfRel(),
+                linkTo(methodOn(UserController.class).getUserByUsername(null)).withRel("search"));
     }
 
     @GetMapping("/{id}")
     public EntityModel<UserDto> getUser(@PathVariable Long id) {
         User user = userService.loadById(id);
+        return userModelAssembler.toModel(user);
+    }
+
+    @GetMapping("/find/{username}")
+    public EntityModel<UserDto> getUserByUsername(@PathVariable String username) {
+        User user = userService.loadByUsername(username);
         return userModelAssembler.toModel(user);
     }
 
