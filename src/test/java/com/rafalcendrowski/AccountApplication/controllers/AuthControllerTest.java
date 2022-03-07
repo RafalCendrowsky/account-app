@@ -1,6 +1,7 @@
 package com.rafalcendrowski.AccountApplication.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rafalcendrowski.AccountApplication.models.UserModelAssembler;
 import com.rafalcendrowski.AccountApplication.user.UserRegisterDto;
 import com.rafalcendrowski.AccountApplication.user.UserService;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +37,8 @@ class AuthControllerTest {
     UserService userService;
     @MockBean
     UserDetailsService detailsService;
+    @MockBean
+    UserModelAssembler userModelAssembler;
     @MockBean
     AccessDeniedHandler accessDeniedHandler;
     @MockBean
