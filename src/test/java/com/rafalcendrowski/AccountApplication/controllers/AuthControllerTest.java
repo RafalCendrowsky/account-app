@@ -60,7 +60,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void testWithValidInputReturnsOK() throws Exception {
+    void testSignupWithValidInputReturnsOK() throws Exception {
         when(encoder.encode(any(String.class))).thenReturn("encoded password");
         mockMvc.perform(post("/api/auth/signup")
                         .contentType("application/json")
@@ -70,7 +70,7 @@ class AuthControllerTest {
 
     @ParameterizedTest
     @MethodSource(value = "invalidUserBodySource")
-    void testWithInvalidUserBody(UserRegisterDto user) throws Exception {
+    void testSignupWithInvalidUserBody(UserRegisterDto user) throws Exception {
         mockMvc.perform(post("/api/auth/signup")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(user)))
@@ -78,7 +78,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void testWithUserAlreadyExists() throws Exception {
+    void testSignupWithUserAlreadyExists() throws Exception {
         when(userService.hasUser(any(String.class))).thenReturn(true);
         mockMvc.perform(post("/api/auth/signup")
                         .contentType("application/json")
@@ -87,7 +87,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void testWithBreachedPassword() throws  Exception {
+    void testSignupWithBreachedPassword() throws  Exception {
         UserRegisterDto user = new UserRegisterDto("name", "lastname",
                 "email@acme.com", "breachedPassword");
         mockMvc.perform(post("/api/auth/signup")
@@ -97,7 +97,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void testReturnWithValidInput() throws Exception {
+    void testSignupReturnWithValidInput() throws Exception {
         EntityModel<UserDto> returnEntity = EntityModel.of(new UserDto());
         when(userModelAssembler.toModel(any(User.class))).thenReturn(returnEntity);
         MvcResult mvcResult = mockMvc.perform(post("/api/auth/signup")
