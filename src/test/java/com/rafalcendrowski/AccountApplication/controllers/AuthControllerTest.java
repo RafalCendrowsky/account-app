@@ -2,6 +2,8 @@ package com.rafalcendrowski.AccountApplication.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rafalcendrowski.AccountApplication.models.UserModelAssembler;
+import com.rafalcendrowski.AccountApplication.user.User;
+import com.rafalcendrowski.AccountApplication.user.UserDto;
 import com.rafalcendrowski.AccountApplication.user.UserRegisterDto;
 import com.rafalcendrowski.AccountApplication.user.UserService;
 import org.apache.logging.log4j.Logger;
@@ -13,13 +15,16 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -89,6 +94,19 @@ class AuthControllerTest {
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testReturnWithValidInput() throws Exception {
+        EntityModel<UserDto> returnEntity = EntityModel.of(new UserDto());
+        when(userModelAssembler.toModel(any(User.class))).thenReturn(returnEntity);
+        MvcResult mvcResult = mockMvc.perform(post("/api/auth/signup")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(testUser)))
+                .andReturn();
+        // a hack to be consistent with how Jackson vs Spring Hateoas maps links
+        String resultBody = mvcResult.getResponse().getContentAsString().replaceFirst("}", ",\"links\":[]}");
+        assertThat(resultBody).isEqualToIgnoringCase(objectMapper.writeValueAsString(returnEntity));
     }
 
     public static Stream<Arguments> invalidUserBodySource() {
