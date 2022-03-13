@@ -1,7 +1,6 @@
 package com.rafalcendrowski.AccountApplication.models;
 
 import com.rafalcendrowski.AccountApplication.controllers.EmployeeController;
-import com.rafalcendrowski.AccountApplication.controllers.UserController;
 import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.user.UserDto;
 import org.springframework.hateoas.EntityModel;

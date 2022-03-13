@@ -1,12 +1,10 @@
 package com.rafalcendrowski.AccountApplication.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
-import java.util.List;
 
 @Data
 @NoArgsConstructor

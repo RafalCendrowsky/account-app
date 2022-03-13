@@ -1,7 +1,6 @@
 package com.rafalcendrowski.AccountApplication.security;
 
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
-import com.rafalcendrowski.AccountApplication.user.UserRepository;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

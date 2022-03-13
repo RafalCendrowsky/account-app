@@ -1,8 +1,8 @@
 package com.rafalcendrowski.AccountApplication.controllers;
 
+import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import com.rafalcendrowski.AccountApplication.models.UserModelAssembler;
 import com.rafalcendrowski.AccountApplication.user.User;
-import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import com.rafalcendrowski.AccountApplication.user.UserDto;
 import com.rafalcendrowski.AccountApplication.user.UserRegisterDto;
 import com.rafalcendrowski.AccountApplication.user.UserService;
@@ -11,8 +11,6 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.RepresentationModel;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,9 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
-import java.awt.image.ReplicateScaleFilter;
-import java.util.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+import java.util.Set;
 
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Password has been breached")

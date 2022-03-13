@@ -1,7 +1,6 @@
 package com.rafalcendrowski.AccountApplication.models;
 
 import com.rafalcendrowski.AccountApplication.controllers.EmployeeController;
-import com.rafalcendrowski.AccountApplication.controllers.PaymentsController;
 import com.rafalcendrowski.AccountApplication.controllers.UserController;
 import com.rafalcendrowski.AccountApplication.payment.Payment;
 import com.rafalcendrowski.AccountApplication.payment.PaymentDto;

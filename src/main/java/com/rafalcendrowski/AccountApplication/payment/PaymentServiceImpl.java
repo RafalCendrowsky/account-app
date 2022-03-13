@@ -3,10 +3,8 @@ package com.rafalcendrowski.AccountApplication.payment;
 import com.rafalcendrowski.AccountApplication.exceptions.CustomNotFoundException;
 import com.rafalcendrowski.AccountApplication.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 

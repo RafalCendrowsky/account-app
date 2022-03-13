@@ -1,12 +1,10 @@
 package com.rafalcendrowski.AccountApplication.controllers;
 
+import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import com.rafalcendrowski.AccountApplication.models.UserModelAssembler;
 import com.rafalcendrowski.AccountApplication.user.User;
-import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import com.rafalcendrowski.AccountApplication.user.UserDto;
 import com.rafalcendrowski.AccountApplication.user.UserService;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -18,10 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;

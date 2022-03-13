@@ -3,7 +3,6 @@ package com.rafalcendrowski.AccountApplication.payment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.constraints.Email;
