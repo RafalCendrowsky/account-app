@@ -46,6 +46,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             return optionalUser.get();
         }
     }
+    /*
+        split user saving to register and update so that every registered
+        user will have been granted a role without it being an intrinsic
+        functionality of the user class and so that it's impossible to save
+        a user without registering it
+    */
 
     @Override
     public User registerUser(User user) {
@@ -77,6 +83,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return (userRepository.findByUsername(username.toLowerCase(Locale.ROOT)) != null);
     }
 
+    // the first user is granted the admin role
     private void grantRole(User user) {
         if (userRepository.findAll().size() == 0) {
             user.addRole(User.Role.ADMINISTRATOR);

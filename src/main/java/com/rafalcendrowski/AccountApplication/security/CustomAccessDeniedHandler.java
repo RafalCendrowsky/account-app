@@ -19,6 +19,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     Logger secLogger;
 
     @Override
+    // a custom handle method to enable logging access denied events
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         String subject = request.getUserPrincipal() == null ? "Anonymous" : request.getUserPrincipal().getName();
         secLogger.warn(LoggerConfig.getEventLogMap(subject, request.getServletPath(),

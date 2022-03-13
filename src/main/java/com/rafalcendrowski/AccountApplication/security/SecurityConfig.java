@@ -93,7 +93,7 @@ class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         String subject = request.getUserPrincipal() == null ? "Anonymous" : request.getUserPrincipal().getName();
         String path = request.getRequestURI();
-        if(!path.equals("/error")) {
+        if(!path.equals("/error")) { // without this every login_failed event would have duplicate logs
             secLogger.info(LoggerConfig.getEventLogMap(subject, path,
                     "LOGIN_FAILED", path));
         }

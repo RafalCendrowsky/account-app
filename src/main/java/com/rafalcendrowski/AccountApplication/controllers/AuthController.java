@@ -46,6 +46,7 @@ public class AuthController {
     @Autowired
     private UserModelAssembler userModelAssembler;
 
+    // a placeholder for a database of breached passwords
     private final Set<String> breachedPasswords = Set.of("breachedPassword");
 
     @PostMapping("/signup")
@@ -58,6 +59,7 @@ public class AuthController {
         User user = new User(userRegisterDto.getEmail(), passwordEncoder.encode(userRegisterDto.getPassword()),
                 userRegisterDto.getName(), userRegisterDto.getLastname());
         userService.registerUser(user);
+        // the subject/perpetrator of the logging event
         String subject = authUser == null ? "Anonymous" : authUser.getName();
         secLogger.info(LoggerConfig.getEventLogMap(subject, user.getUsername(), "CREATE_USER", "api/auth/signup"));
         return userModelAssembler.toModel(user);
@@ -85,7 +87,7 @@ public class AuthController {
 }
 
 @Data
-class Password {
+class Password { // a wrapper object for validation purposes
     @NotEmpty
     @Size(min=12)
     String password;

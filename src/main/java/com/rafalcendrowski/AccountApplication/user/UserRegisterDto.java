@@ -9,7 +9,7 @@ import javax.validation.constraints.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterDto {
+public class UserRegisterDto { // a dto for registering new user entities
     @NotEmpty
     private String name;
     @NotEmpty

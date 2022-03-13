@@ -10,7 +10,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @Relation(collectionRelation = "users")
-public class UserDto {
+public class UserDto { // a dto for modelling user entities
     private Long id;
     private String name;
     private String lastname;

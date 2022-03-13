@@ -36,6 +36,7 @@ public class EmployeeController {
 
     @Autowired
     EmployeeModelAssembler employeeModelAssembler;
+
     @GetMapping
     public EntityModel<UserDto> getEmployee(@AuthenticationPrincipal User user) {
         return employeeModelAssembler.toModel(user);
@@ -44,6 +45,7 @@ public class EmployeeController {
     @GetMapping(value = "/payment", params = {"period"})
     public EntityModel<PaymentDto> getPayment(@RequestParam String period,
                                               @AuthenticationPrincipal User user) {
+        // check that the period is a valid date in the mm-yyyy format
         if (!period.matches("(0[1-9]|1[0-2])-\\d\\d\\d\\d")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid period");
         }
