@@ -55,8 +55,7 @@ public class EmployeeController {
 
     @GetMapping("/payment")
     public CollectionModel<EntityModel<PaymentDto>> getPayments(@AuthenticationPrincipal User user) {
-        List<EntityModel<PaymentDto>> payments = new ArrayList<>();
-        payments = paymentService.loadByEmployee(user).stream()
+        List<EntityModel<PaymentDto>> payments = paymentService.loadByEmployee(user).stream()
                 .map(employeePaymentModelAssembler::toModel).toList();
         return CollectionModel.of(payments,
                 linkTo(methodOn(EmployeeController.class).getPayments(null)).withSelfRel());
