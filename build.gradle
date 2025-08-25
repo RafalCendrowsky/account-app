@@ -1,40 +1,49 @@
 plugins {
-	id 'org.springframework.boot' version '2.6.3'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '3.5.5'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
 }
 
 group = 'com.rafalcendrowski'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-log4j2'
-	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
-	implementation 'mysql:mysql-connector-java:8.0.25'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.36'
+    implementation 'com.mysql:mysql-connector-j:9.4.0'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'jakarta.validation:jakarta.validation-api:3.1.1'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-	testCompileOnly 'org.mockito:mockito-junit-jupiter:4.3.1'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testCompileOnly 'org.mockito:mockito-junit-jupiter:5.19.0'
 }
 
 configurations.implementation {
-	exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
 }
 
-
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
