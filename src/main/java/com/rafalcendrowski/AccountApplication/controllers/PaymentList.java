@@ -8,7 +8,7 @@ import java.util.*;
 
 @Setter
 @Getter
-class PaymentList<E> implements List<E> {
+public class PaymentList<E> implements List<E> {
     @Valid
     List<E> paymentList;
 

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-class Password { // a wrapper object for validation purposes
+public class Password { // a wrapper object for validation purposes
     @NotEmpty
     @Size(min = 12)
     String password;

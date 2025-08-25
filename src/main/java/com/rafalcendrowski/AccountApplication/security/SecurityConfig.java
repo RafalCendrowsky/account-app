@@ -16,12 +16,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final Logger secLogger;
+    private final JwtFilter jwtFilter;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(13);
     private final AccessDeniedHandler accessDeniedHandler;
 
@@ -48,7 +50,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/security/events").hasRole("AUDITOR")
                         .anyRequest().hasRole("ADMINISTRATOR")
                 )
-                .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(new RestAuthenticationEntryPoint(secLogger)))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception.accessDeniedHandler(accessDeniedHandler))
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))

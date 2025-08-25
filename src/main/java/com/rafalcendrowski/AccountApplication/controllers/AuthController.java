@@ -3,6 +3,7 @@ package com.rafalcendrowski.AccountApplication.controllers;
 import com.rafalcendrowski.AccountApplication.exceptions.BreachedPasswordException;
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import com.rafalcendrowski.AccountApplication.models.UserModelAssembler;
+import com.rafalcendrowski.AccountApplication.security.JwtService;
 import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.user.UserDto;
 import com.rafalcendrowski.AccountApplication.user.UserRegisterDto;
@@ -13,7 +14,9 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Logger;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Map;
 import java.util.Set;
 
 
@@ -37,6 +41,8 @@ public class AuthController {
 
     // a placeholder for a database of breached passwords
     private final Set<String> breachedPasswords = Set.of("breachedPassword");
+    private final UserDetailsService userDetailsService;
+    private final JwtService jwtService;
 
     @PostMapping("/signup")
     public EntityModel<UserDto> addAccount(@Valid @RequestBody UserRegisterDto userRegisterDto, @AuthenticationPrincipal User authUser) {
@@ -54,6 +60,18 @@ public class AuthController {
         return userModelAssembler.toModel(user);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        var userDetails = userDetailsService.loadUserByUsername(request.username());
+
+        // validate password manually (BCrypt, etc.)
+        if (!userDetails.getPassword().equals(passwordEncoder.encode(request.password()))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        var token = jwtService.generateToken(userDetails);
+        return ResponseEntity.ok(Map.of("token", token));
+    }
 
     @PostMapping("/changepass")
     public EntityModel<UserDto> changePassword(@RequestBody @Valid Password newPassword, @AuthenticationPrincipal User user) {
