@@ -4,7 +4,7 @@ import com.rafalcendrowski.AccountApplication.user.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity

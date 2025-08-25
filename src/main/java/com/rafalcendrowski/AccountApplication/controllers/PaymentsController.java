@@ -6,7 +6,11 @@ import com.rafalcendrowski.AccountApplication.payment.PaymentDto;
 import com.rafalcendrowski.AccountApplication.payment.PaymentService;
 import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -14,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.transaction.Transactional;
-import javax.validation.Valid;
 import java.util.*;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -23,16 +25,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/payments")
+@RequiredArgsConstructor
 public class PaymentsController {
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    PaymentService paymentService;
-
-    @Autowired
-    PaymentModelAssembler paymentModelAssembler;
+    final UserService userService;
+    final PaymentService paymentService;
+    final PaymentModelAssembler paymentModelAssembler;
 
     @GetMapping
     public CollectionModel<EntityModel<PaymentDto>> getPayments() {
@@ -56,7 +53,7 @@ public class PaymentsController {
         User employee = userService.loadById(userId);
         List<EntityModel<PaymentDto>> payments = paymentService.loadByEmployee(employee).stream()
                 .map(paymentModelAssembler::toModel).toList();
-        return  CollectionModel.of(payments,
+        return CollectionModel.of(payments,
                 linkTo(methodOn(PaymentsController.class).getPaymentsByUserId(userId)).withSelfRel(),
                 linkTo(methodOn(UserController.class).getUser(userId)).withRel("user"),
                 linkTo(methodOn(PaymentsController.class).getPayments()).withRel("payments"));
@@ -83,7 +80,7 @@ public class PaymentsController {
     @PostMapping
     public CollectionModel<EntityModel<PaymentDto>> addPayrolls(@Valid @RequestBody PaymentList<PaymentDto> payments) {
         List<Payment> paymentList = new ArrayList<>();
-        for(PaymentDto paymentDto : payments) {
+        for (PaymentDto paymentDto : payments) {
             User employee = userService.loadByUsername(paymentDto.getEmployee());
             if (paymentService.hasPayment(employee, paymentDto.getPeriod())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -143,20 +140,14 @@ public class PaymentsController {
     }
 }
 
-class PaymentList<E> implements List<E>{
+@Setter
+@Getter
+class PaymentList<E> implements List<E> {
     @Valid
     List<E> paymentList;
 
     public PaymentList() {
         this.paymentList = new ArrayList<E>();
-    }
-
-    public List<E> getPaymentList() {
-        return paymentList;
-    }
-
-    public void setPaymentList(List<E> paymentList) {
-        this.paymentList = paymentList;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.rafalcendrowski.AccountApplication.user;
 
 import com.rafalcendrowski.AccountApplication.exceptions.CustomNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,8 +13,11 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -85,7 +87,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     // the first user is granted the admin role
     private void grantRole(User user) {
-        if (userRepository.findAll().size() == 0) {
+        if (userRepository.findAll().isEmpty()) {
             user.addRole(User.Role.ADMINISTRATOR);
         } else {
             user.addRole(User.Role.USER);

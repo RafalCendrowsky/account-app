@@ -7,7 +7,7 @@ import com.rafalcendrowski.AccountApplication.payment.PaymentDto;
 import com.rafalcendrowski.AccountApplication.payment.PaymentService;
 import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.user.UserDto;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -26,16 +25,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/empl")
+@RequiredArgsConstructor
 public class EmployeeController {
-
-    @Autowired
-    PaymentService paymentService;
-
-    @Autowired
-    EmployeePaymentModelAssembler employeePaymentModelAssembler;
-
-    @Autowired
-    EmployeeModelAssembler employeeModelAssembler;
+    final PaymentService paymentService;
+    final EmployeePaymentModelAssembler employeePaymentModelAssembler;
+    final EmployeeModelAssembler employeeModelAssembler;
 
     @GetMapping
     public EntityModel<UserDto> getEmployee(@AuthenticationPrincipal User user) {

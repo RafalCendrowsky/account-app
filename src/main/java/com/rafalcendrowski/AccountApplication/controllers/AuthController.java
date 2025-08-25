@@ -6,10 +6,13 @@ import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.user.UserDto;
 import com.rafalcendrowski.AccountApplication.user.UserRegisterDto;
 import com.rafalcendrowski.AccountApplication.user.UserService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,34 +20,27 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 import java.util.Set;
 
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Password has been breached")
 class BreachedPasswordException extends RuntimeException {
-    public BreachedPasswordException() { super(); }
+    public BreachedPasswordException() {
+        super();
+    }
 }
 
 
 @RestController
 @RequestMapping("/api/auth")
 @Log4j2
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private Logger secLogger;
-
-    @Autowired
-    private UserModelAssembler userModelAssembler;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final Logger secLogger;
+    private final UserModelAssembler userModelAssembler;
 
     // a placeholder for a database of breached passwords
     private final Set<String> breachedPasswords = Set.of("breachedPassword");
@@ -68,9 +64,9 @@ public class AuthController {
 
     @PostMapping("/changepass")
     public EntityModel<UserDto> changePassword(@RequestBody @Valid Password newPassword, @AuthenticationPrincipal User user) {
-        if(isBreached(newPassword.getPassword())) {
+        if (isBreached(newPassword.getPassword())) {
             throw new BreachedPasswordException();
-        } else if(passwordEncoder.matches(newPassword.getPassword(), user.getPassword())) {
+        } else if (passwordEncoder.matches(newPassword.getPassword(), user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwords must be different");
         } else {
             user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
@@ -89,6 +85,6 @@ public class AuthController {
 @Data
 class Password { // a wrapper object for validation purposes
     @NotEmpty
-    @Size(min=12)
+    @Size(min = 12)
     String password;
 }

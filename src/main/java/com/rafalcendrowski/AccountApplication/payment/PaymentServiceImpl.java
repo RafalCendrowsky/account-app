@@ -2,7 +2,6 @@ package com.rafalcendrowski.AccountApplication.payment;
 
 import com.rafalcendrowski.AccountApplication.exceptions.CustomNotFoundException;
 import com.rafalcendrowski.AccountApplication.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +10,11 @@ import java.util.Optional;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-    @Autowired
-    private PaymentRepository paymentRepository;
+    private final PaymentRepository paymentRepository;
+
+    public PaymentServiceImpl(PaymentRepository paymentRepository) {
+        this.paymentRepository = paymentRepository;
+    }
 
     @Override
     public Payment savePayment(Payment payment) {
@@ -27,7 +29,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Payment loadById(Long id) throws CustomNotFoundException {
         Optional<Payment> optionalPayment = paymentRepository.findById(id);
-        if(optionalPayment.isEmpty()) {
+        if (optionalPayment.isEmpty()) {
             throw new CustomNotFoundException("Payment not found");
         } else {
             return optionalPayment.get();
