@@ -1,5 +1,6 @@
 package com.rafalcendrowski.AccountApplication.controllers;
 
+import com.rafalcendrowski.AccountApplication.exceptions.BreachedPasswordException;
 import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
 import com.rafalcendrowski.AccountApplication.models.UserModelAssembler;
 import com.rafalcendrowski.AccountApplication.user.User;
@@ -7,9 +8,6 @@ import com.rafalcendrowski.AccountApplication.user.UserDto;
 import com.rafalcendrowski.AccountApplication.user.UserRegisterDto;
 import com.rafalcendrowski.AccountApplication.user.UserService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Logger;
@@ -17,18 +15,13 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Set;
-
-
-@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Password has been breached")
-class BreachedPasswordException extends RuntimeException {
-    public BreachedPasswordException() {
-        super();
-    }
-}
 
 
 @RestController
@@ -82,9 +75,3 @@ public class AuthController {
 
 }
 
-@Data
-class Password { // a wrapper object for validation purposes
-    @NotEmpty
-    @Size(min = 12)
-    String password;
-}

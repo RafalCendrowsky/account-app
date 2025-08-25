@@ -1,8 +1,5 @@
 package com.rafalcendrowski.AccountApplication.security;
 
-import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Bean;
@@ -15,14 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-
-import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -61,18 +54,6 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
-    }
-}
-
-record RestAuthenticationEntryPoint(Logger secLogger) implements AuthenticationEntryPoint {
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-        String subject = request.getUserPrincipal() == null ? "Anonymous" : request.getUserPrincipal().getName();
-        String path = request.getRequestURI();
-        if (!path.equals("/error")) { // without this every login_failed event would have duplicate logs
-            secLogger.info(LoggerConfig.getEventLogMap(subject, path, "LOGIN_FAILED", path));
-        }
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
     }
 }
 
