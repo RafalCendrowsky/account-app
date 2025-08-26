@@ -6,7 +6,7 @@
                     pattern="%style{%d}{bright, magenta} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable" />
         </Console>
         <JDBC name="databaseAppender" tableName="event_log">
-            <ConnectionFactory class="com.rafalcendrowski.AccountApplication.logging.ConnectionFactory" method="getConnection" />
+            <ConnectionFactory class="com.rafalcendrowski.accountapp.logging.ConnectionFactory" method="getConnection"/>
             <Column name="date" isEventTimestamp="true" />
             <ColumnMapping name="subject" pattern="%K{subject}"/>
             <ColumnMapping name="object" pattern="%K{object}"/>
