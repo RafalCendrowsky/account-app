@@ -1,15 +1,10 @@
 package com.rafalcendrowski.AccountApplication.controllers;
 
-import com.rafalcendrowski.AccountApplication.logging.LoggerConfig;
-import com.rafalcendrowski.AccountApplication.models.UserModelAssembler;
 import com.rafalcendrowski.AccountApplication.user.User;
 import com.rafalcendrowski.AccountApplication.user.UserDto;
 import com.rafalcendrowski.AccountApplication.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.Logger;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,36 +13,29 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 @RestController
 @RequestMapping("api/users")
 @RequiredArgsConstructor
 public class UserController {
     final UserService userService;
-    final Logger secLogger;
-    final UserModelAssembler userModelAssembler;
 
     @GetMapping
-    public CollectionModel<EntityModel<UserDto>> getUsers() {
-        List<EntityModel<UserDto>> userList = userService.loadAllUsers().stream()
-                .map(userModelAssembler::toModel).toList();
-        return CollectionModel.of(userList,
-                linkTo(methodOn(UserController.class).getUsers()).withSelfRel(),
-                linkTo(methodOn(UserController.class).getUserByUsername(null)).withRel("search"));
+    public List<UserDto> getUsers() {
+        return userService.loadAllUsers().stream()
+                .map(UserDto::of)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public EntityModel<UserDto> getUser(@PathVariable Long id) {
+    public UserDto getUser(@PathVariable Long id) {
         User user = userService.loadById(id);
-        return userModelAssembler.toModel(user);
+        return UserDto.of(user);
     }
 
     @GetMapping("/find/{username}")
-    public EntityModel<UserDto> getUserByUsername(@PathVariable String username) {
+    public UserDto getUserByUsername(@PathVariable String username) {
         User user = userService.loadByUsername(username);
-        return userModelAssembler.toModel(user);
+        return UserDto.of(user);
     }
 
     @DeleteMapping("/{id}")
@@ -57,29 +45,25 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't remove ADMINISTRATOR!");
         } else {
             userService.deleteUser(user);
-            secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), user.getUsername(),
-                    "DELETE_USER", "/api/admin/user"));
             return ResponseEntity.noContent().build();
         }
     }
 
     @PutMapping("/{id}/role")
-    public EntityModel<UserDto> updateRole(@PathVariable Long id, @Valid @RequestBody User.Role role, @AuthenticationPrincipal User admin) {
+    public UserDto updateRole(@PathVariable Long id, @Valid @RequestBody User.Role role, @AuthenticationPrincipal User admin) {
         User user = userService.loadById(id);
         if (user.hasRole(User.Role.ADMINISTRATOR) != role.equals(User.Role.ADMINISTRATOR)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot combine ADMINISTRATOR with other roles");
         } else {
             if (user.addRole(role)) {
                 userService.updateUser(user);
-                secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Grant role %s to %s".formatted(role, user.getUsername()),
-                        "GRANT_ROLE", "/api/admin/user/role"));
             }
-            return userModelAssembler.toModel(user);
+            return UserDto.of(user);
         }
     }
 
     @DeleteMapping("/{id}/role")
-    public EntityModel<UserDto> deleteRole(@PathVariable Long id, @Valid @RequestBody User.Role role, @AuthenticationPrincipal User admin) {
+    public UserDto deleteRole(@PathVariable Long id, @Valid @RequestBody User.Role role, @AuthenticationPrincipal User admin) {
         User user = userService.loadById(id);
         if (!user.hasRole(role)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User role not found");
@@ -91,9 +75,7 @@ public class UserController {
             }
             user.removeRole(role);
             userService.updateUser(user);
-            secLogger.info(LoggerConfig.getEventLogMap(admin.getUsername(), "Remove role %s from %s".formatted(role, user.getUsername()),
-                    "REMOVE_ROLE", "/api/admin/user/role"));
-            return userModelAssembler.toModel(user);
+            return UserDto.of(user);
         }
     }
 }

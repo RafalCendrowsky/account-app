@@ -2,15 +2,13 @@ package com.rafalcendrowski.AccountApplication.user;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.hateoas.server.core.Relation;
 
 import java.util.Set;
 
 
 @Data
 @NoArgsConstructor
-@Relation(collectionRelation = "users")
-public class UserDto { // a dto for modelling user entities
+public class UserDto {
     private Long id;
     private String name;
     private String lastname;

@@ -3,7 +3,6 @@ package com.rafalcendrowski.AccountApplication.payment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.hateoas.server.core.Relation;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
@@ -13,7 +12,6 @@ import jakarta.validation.constraints.Pattern;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Relation(collectionRelation = "payments")
 public class PaymentDto {
     Long id;
     @NotEmpty
