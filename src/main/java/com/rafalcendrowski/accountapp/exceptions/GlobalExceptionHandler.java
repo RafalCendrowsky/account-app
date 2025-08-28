@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return Map.of(
                 "timestamp", LocalDateTime.now(),
                 "status", HttpStatus.NOT_FOUND,
-                "error", "Entity Not Found",
+                "error", "Entity not found",
                 "message", exception.getMessage()
         );
     }
@@ -30,9 +31,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return Map.of(
                 "timestamp", LocalDateTime.now(),
                 "status", HttpStatus.UNPROCESSABLE_ENTITY,
-                "error", "Entity Already Exists",
+                "error", "Entity already Exists",
                 "message", exception.getMessage()
         );
+    }
+
+    @ExceptionHandler(LoginException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public void responseStatusExceptionHandler(ResponseStatusException exception, WebRequest request) {
     }
 
     @ExceptionHandler(Exception.class)
