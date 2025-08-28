@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -56,11 +57,10 @@ public class PaymentService {
     }
 
     private void savePayment(Payment payment) {
-        try {
-            paymentRepository.save(payment);
-        } catch (Exception e) {
-            throw new EntityNotFoundException("Employee not found");
-        }
+        Optional.ofNullable(payment.getEmployee())
+                .map(e -> employeeService.getEntityById(e.getId()))
+                .ifPresent(payment::setEmployee);
+        paymentRepository.save(payment);
     }
 
 

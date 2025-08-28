@@ -14,7 +14,6 @@ public interface PaymentMapper {
     @Mapping(target = "employee.id", source = "employeeId")
     Payment toModel(PaymentRequest paymentRequest);
 
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "employee.id", source = "employeeId")
     void updateModelFromRequest(@MappingTarget Payment payment, PaymentRequest request);
 }
