@@ -3,13 +3,14 @@ package com.rafalcendrowski.accountapp.service;
 import com.rafalcendrowski.accountapp.api.payment.request.PaymentRequest;
 import com.rafalcendrowski.accountapp.api.payment.response.PaymentResponse;
 import com.rafalcendrowski.accountapp.exceptions.EntityNotFoundException;
-import com.rafalcendrowski.accountapp.mapper.PaymentMapperImpl;
+import com.rafalcendrowski.accountapp.mapper.PaymentMapper;
 import com.rafalcendrowski.accountapp.model.employee.Employee;
 import com.rafalcendrowski.accountapp.model.payment.Payment;
 import com.rafalcendrowski.accountapp.model.payment.PaymentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -47,7 +48,7 @@ class PaymentServiceTest {
         payment.setEmployee(employee);
 
         request = new PaymentRequest(employee.getId(), payment.getPeriod(), payment.getSalary());
-        paymentService = new PaymentService(paymentRepository, employeeService, new PaymentMapperImpl());
+        paymentService = new PaymentService(paymentRepository, employeeService, Mappers.getMapper(PaymentMapper.class));
     }
 
     @Test

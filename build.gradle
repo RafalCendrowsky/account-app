@@ -9,7 +9,7 @@ version = '1.0.0'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -36,6 +36,7 @@ dependencies {
 
     implementation 'jakarta.validation:jakarta.validation-api:3.1.1'
 
+    testImplementation 'org.testcontainers:postgresql:1.21.3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testCompileOnly 'org.mockito:mockito-junit-jupiter:5.19.0'
