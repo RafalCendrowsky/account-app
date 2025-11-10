@@ -24,16 +24,18 @@ public class AuditEntityEventListener implements PostUpdateEventListener, PostDe
             return;
 
         var propertyNames = event.getPersister().getPropertyNames();
-        var dirtyPropertiesIndices = event.getDirtyProperties();
+        var oldMap = new HashMap<String, Object>();
+        var newMap = new HashMap<String, Object>();
 
-        Map<String, Object> changes = new HashMap<>();
-        for (int index : dirtyPropertiesIndices) {
+        for (int index : event.getDirtyProperties()) {
             String property = propertyNames[index];
-            Object oldVal = event.getOldState()[index];
-            Object newVal = event.getState()[index];
-            changes.put(property, Map.of("old", oldVal, "new", newVal));
+            oldMap.put(property, event.getOldState()[index]);
+            newMap.put(property, event.getState()[index]);
         }
-
+        var changes = Map.of(
+                "old", oldMap,
+                "new", newMap
+        );
         auditLogService.logEntityEvent(entity, (String) event.getId(), EntityEventType.UPDATE, changes);
     }
 

@@ -26,8 +26,8 @@ public class AuditLogService {
 
     public List<AuditLogResponse> findAll(LocalDateTime from, LocalDateTime to, @Nullable String entityType) {
         var logs = entityType != null ?
-                   auditEntityLogRepository.getAuditEntityLogsByTimestampBetweenAndEntity(from, to, entityType) :
-                   auditEntityLogRepository.getAuditEntityLogsByTimestampBetween(from, to);
+                auditEntityLogRepository.getAuditEntityLogsByTimestampBetweenAndEntity(from, to, entityType) :
+                auditEntityLogRepository.getAuditEntityLogsByTimestampBetween(from, to);
 
         return logs.stream()
                 .map(auditLogMapper::toResponse)
@@ -39,7 +39,6 @@ public class AuditLogService {
     }
 
     public void logEntityEvent(Object entity, String entityId, EntityEventType eventType, Object data) {
-
         var log = new AuditEntityLog();
         log.setEntity(entity.getClass().getSimpleName());
         log.setEntityId(entityId);
