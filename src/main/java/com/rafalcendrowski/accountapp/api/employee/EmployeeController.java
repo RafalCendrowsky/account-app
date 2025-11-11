@@ -1,5 +1,6 @@
 package com.rafalcendrowski.accountapp.api.employee;
 
+import com.rafalcendrowski.accountapp.api.common.AuditResponse;
 import com.rafalcendrowski.accountapp.api.employee.request.EmployeeRequest;
 import com.rafalcendrowski.accountapp.api.employee.response.EmployeeResponse;
 import com.rafalcendrowski.accountapp.api.payment.response.PaymentResponse;
@@ -50,5 +51,10 @@ public class EmployeeController {
     @GetMapping("/{id}/payment}")
     public List<PaymentResponse> getPaymentsForEmployee(@PathVariable String id) {
         return paymentService.findByEmployee(id);
+    }
+
+    @GetMapping("/{id}/audit")
+    public List<AuditResponse<EmployeeResponse>> getEmployeeAuditLogs(@PathVariable String id) {
+        return employeeService.findAuditLogsById(id);
     }
 }

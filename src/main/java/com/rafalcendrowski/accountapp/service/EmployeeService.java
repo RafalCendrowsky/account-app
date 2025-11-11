@@ -1,5 +1,6 @@
 package com.rafalcendrowski.accountapp.service;
 
+import com.rafalcendrowski.accountapp.api.common.AuditResponse;
 import com.rafalcendrowski.accountapp.api.employee.request.EmployeeRequest;
 import com.rafalcendrowski.accountapp.api.employee.response.EmployeeResponse;
 import com.rafalcendrowski.accountapp.exceptions.EntityNotFoundException;
@@ -20,6 +21,13 @@ public class EmployeeService {
     public List<EmployeeResponse> findAll() {
         return employeeRepository.findAll().stream()
                 .map(employeeMapper::toResponse)
+                .toList();
+    }
+
+    public List<AuditResponse<EmployeeResponse>> findAuditLogsById(String id) {
+        var employee = getEntityById(id);
+        return employeeRepository.findRevisions(employee.getId()).stream()
+                .map(rev -> AuditResponse.from(employeeMapper.toResponse(rev.getEntity()), rev.getMetadata()))
                 .toList();
     }
 

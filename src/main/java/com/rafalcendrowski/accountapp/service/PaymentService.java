@@ -1,5 +1,6 @@
 package com.rafalcendrowski.accountapp.service;
 
+import com.rafalcendrowski.accountapp.api.common.AuditResponse;
 import com.rafalcendrowski.accountapp.api.payment.request.PaymentRequest;
 import com.rafalcendrowski.accountapp.api.payment.response.PaymentResponse;
 import com.rafalcendrowski.accountapp.exceptions.EntityNotFoundException;
@@ -29,6 +30,13 @@ public class PaymentService {
         var employee = employeeService.getEntityById(employeeId);
         return paymentRepository.findByEmployee(employee).stream()
                 .map(paymentMapper::toResponse)
+                .toList();
+    }
+
+    public List<AuditResponse<PaymentResponse>> findAuditLogsById(String id) {
+        var employee = getEntityById(id);
+        return paymentRepository.findRevisions(employee.getId()).stream()
+                .map(rev -> AuditResponse.from(paymentMapper.toResponse(rev.getEntity()), rev.getMetadata()))
                 .toList();
     }
 

@@ -1,5 +1,6 @@
 package com.rafalcendrowski.accountapp.api.payment;
 
+import com.rafalcendrowski.accountapp.api.common.AuditResponse;
 import com.rafalcendrowski.accountapp.api.payment.request.PaymentRequest;
 import com.rafalcendrowski.accountapp.api.payment.response.PaymentResponse;
 import com.rafalcendrowski.accountapp.service.PaymentService;
@@ -40,6 +41,11 @@ public class PaymentController {
     @DeleteMapping("/{id}")
     public void deletePayment(@PathVariable String id) {
         paymentService.delete(id);
+    }
+
+    @GetMapping("/{id}/audit")
+    public List<AuditResponse<PaymentResponse>> getPaymentAuditLogs(@PathVariable String id) {
+        return paymentService.findAuditLogsById(id);
     }
 }
 
