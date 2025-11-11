@@ -4,8 +4,8 @@ import com.rafalcendrowski.accountapp.api.payment.request.PaymentRequest;
 import com.rafalcendrowski.accountapp.api.payment.response.PaymentResponse;
 import com.rafalcendrowski.accountapp.exceptions.EntityNotFoundException;
 import com.rafalcendrowski.accountapp.mapper.PaymentMapper;
-import com.rafalcendrowski.accountapp.model.payment.Payment;
-import com.rafalcendrowski.accountapp.model.payment.PaymentRepository;
+import com.rafalcendrowski.accountapp.persistance.payment.Payment;
+import com.rafalcendrowski.accountapp.persistance.payment.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

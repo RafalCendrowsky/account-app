@@ -1,6 +1,6 @@
 package com.rafalcendrowski.accountapp.api.user.response;
 
-import com.rafalcendrowski.accountapp.model.user.UserRole;
+import com.rafalcendrowski.accountapp.persistance.user.UserRole;
 
 import java.util.List;
 

@@ -1,10 +1,11 @@
-package com.rafalcendrowski.accountapp.model.employee;
+package com.rafalcendrowski.accountapp.persistance.employee;
 
-import com.rafalcendrowski.accountapp.model.payment.Payment;
-import com.rafalcendrowski.accountapp.model.user.User;
+import com.rafalcendrowski.accountapp.persistance.payment.Payment;
+import com.rafalcendrowski.accountapp.persistance.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Audited
 @Table(name = "employees")
 public class Employee {
     @Id
@@ -19,7 +21,7 @@ public class Employee {
     private String id;
     private String name;
     private String surname;
-    
+
     @Column(unique = true)
     private String email;
     private String phoneNumber;

@@ -2,8 +2,8 @@ package com.rafalcendrowski.accountapp.service;
 
 import com.rafalcendrowski.accountapp.api.auth.request.LoginRequest;
 import com.rafalcendrowski.accountapp.exceptions.LoginException;
-import com.rafalcendrowski.accountapp.model.user.User;
-import com.rafalcendrowski.accountapp.model.user.UserRole;
+import com.rafalcendrowski.accountapp.persistance.user.User;
+import com.rafalcendrowski.accountapp.persistance.user.UserRole;
 import com.rafalcendrowski.accountapp.properties.SecurityProperties;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -4,8 +4,8 @@ import com.rafalcendrowski.accountapp.api.employee.request.EmployeeRequest;
 import com.rafalcendrowski.accountapp.api.employee.response.EmployeeResponse;
 import com.rafalcendrowski.accountapp.exceptions.EntityNotFoundException;
 import com.rafalcendrowski.accountapp.mapper.EmployeeMapper;
-import com.rafalcendrowski.accountapp.model.employee.Employee;
-import com.rafalcendrowski.accountapp.model.employee.EmployeeRepository;
+import com.rafalcendrowski.accountapp.persistance.employee.Employee;
+import com.rafalcendrowski.accountapp.persistance.employee.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

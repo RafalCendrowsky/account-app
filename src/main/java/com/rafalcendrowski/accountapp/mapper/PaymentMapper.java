@@ -2,7 +2,7 @@ package com.rafalcendrowski.accountapp.mapper;
 
 import com.rafalcendrowski.accountapp.api.payment.request.PaymentRequest;
 import com.rafalcendrowski.accountapp.api.payment.response.PaymentResponse;
-import com.rafalcendrowski.accountapp.model.payment.Payment;
+import com.rafalcendrowski.accountapp.persistance.payment.Payment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

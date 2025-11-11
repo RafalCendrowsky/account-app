@@ -1,4 +1,4 @@
-package com.rafalcendrowski.accountapp.model.user;
+package com.rafalcendrowski.accountapp.persistance.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

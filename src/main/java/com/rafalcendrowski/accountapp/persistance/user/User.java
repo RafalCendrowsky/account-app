@@ -1,6 +1,6 @@
-package com.rafalcendrowski.accountapp.model.user;
+package com.rafalcendrowski.accountapp.persistance.user;
 
-import com.rafalcendrowski.accountapp.model.employee.Employee;
+import com.rafalcendrowski.accountapp.persistance.employee.Employee;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

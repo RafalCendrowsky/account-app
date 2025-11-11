@@ -1,4 +1,4 @@
-package com.rafalcendrowski.accountapp.model.employee;
+package com.rafalcendrowski.accountapp.persistance.employee;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -2,7 +2,7 @@ package com.rafalcendrowski.accountapp.mapper;
 
 import com.rafalcendrowski.accountapp.api.user.request.RegisterUserRequest;
 import com.rafalcendrowski.accountapp.api.user.response.UserResponse;
-import com.rafalcendrowski.accountapp.model.user.User;
+import com.rafalcendrowski.accountapp.persistance.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
